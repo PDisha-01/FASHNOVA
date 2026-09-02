@@ -42,3 +42,11 @@ coverage/
 *.code-workspace
 .DS_Store
 Thumbs.db
+
+# User-uploaded files
+backend/uploads/
+
+# Local AI/tooling files
+backend/.agents/
+backend/.claude/
+backend/.windsurf/

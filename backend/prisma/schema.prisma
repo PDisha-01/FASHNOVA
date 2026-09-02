@@ -1,0 +1,398 @@
+// FASHNOVA Database Schema
+// Prisma 7 + PostgreSQL
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum FashionCategory {
+  TOP
+  BOTTOM
+  DRESS
+  OUTERWEAR
+  FOOTWEAR
+  ACCESSORY
+  FULL_OUTFIT
+}
+
+enum PatternType {
+  SOLID
+  STRIPED
+  CHECKED
+  PLAID
+  FLORAL
+  POLKA_DOT
+  GEOMETRIC
+  ABSTRACT
+  PRINTED
+  GRAPHIC
+  ANIMAL_PRINT
+  CAMOUFLAGE
+  TEXTURED
+  OTHER
+}
+
+enum FitType {
+  SLIM
+  REGULAR
+  RELAXED
+  OVERSIZED
+  LOOSE
+  TAILORED
+  BODYCON
+  OTHER
+}
+
+enum StyleType {
+  CASUAL
+  FORMAL
+  BUSINESS_CASUAL
+  STREETWEAR
+  SPORTSWEAR
+  PARTY
+  ETHNIC
+  MINIMAL
+  VINTAGE
+  BOHEMIAN
+  PREPPY
+  Y2K
+  LUXURY
+  OTHER
+}
+
+enum SeasonType {
+  SPRING
+  SUMMER
+  AUTUMN
+  WINTER
+  ALL_SEASON
+}
+
+enum VisionAnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique @db.VarChar(255)
+  passwordHash String     @map("password_hash") @db.VarChar(255)
+  status       UserStatus @default(ACTIVE)
+
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+ profile      UserProfile?
+preferences  UserPreference?
+fashionItems FashionItem[]
+studioGenerations StudioGeneration[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+
+  firstName String?  @map("first_name") @db.VarChar(100)
+  lastName  String?  @map("last_name") @db.VarChar(100)
+  avatarUrl String?  @map("avatar_url") @db.Text
+  bio       String?  @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+model UserPreference {
+  id                  String          @id @default(uuid()) @db.Uuid
+  userId              String          @unique @map("user_id") @db.Uuid
+
+  preferredStyles     StyleType[]     @map("preferred_styles")
+  preferredColors     String[]        @map("preferred_colors")
+  preferredSeasons    SeasonType[]    @map("preferred_seasons")
+  preferredCategories FashionCategory[] @map("preferred_categories")
+  preferredFits       FitType[]       @map("preferred_fits")
+
+  favoriteBrands      String[]        @map("favorite_brands")
+
+  budgetMin           Decimal?        @map("budget_min") @db.Decimal(10, 2)
+  budgetMax           Decimal?        @map("budget_max") @db.Decimal(10, 2)
+
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+model FashionItem {
+  id          String          @id @default(uuid()) @db.Uuid
+  ownerId     String?         @map("owner_id") @db.Uuid
+
+  name        String?         @db.VarChar(200)
+  description String?         @db.Text
+  category    FashionCategory
+
+  brand       String?         @db.VarChar(150)
+  pattern     PatternType?
+  fit         FitType?
+  style       StyleType?
+  season      SeasonType?
+
+  source      String?         @db.VarChar(100)
+
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  owner       User?           @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  images      FashionImage[]
+
+  @@index([ownerId])
+  @@index([category])
+  @@index([style])
+  @@index([season])
+  @@map("fashion_items")
+}
+
+model FashionImage {
+  id            String      @id @default(uuid()) @db.Uuid
+  fashionItemId String      @map("fashion_item_id") @db.Uuid
+
+  storageKey    String      @unique @map("storage_key") @db.VarChar(500)
+  imageUrl      String?     @map("image_url") @db.Text
+  mimeType      String      @db.VarChar(100)
+  fileSize      Int?        @map("file_size")
+
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  fashionItem   FashionItem @relation(fields: [fashionItemId], references: [id], onDelete: Cascade)
+  visionAnalyses  VisionAnalysis[]
+  @@index([fashionItemId])
+  @@map("fashion_images")
+}
+
+model VisionAnalysis {
+  id              String               @id @default(uuid()) @db.Uuid
+  fashionImageId  String               @map("fashion_image_id") @db.Uuid
+
+  status          VisionAnalysisStatus @default(PENDING)
+
+  modelName       String               @map("model_name") @db.VarChar(150)
+  modelVersion    String               @map("model_version") @db.VarChar(50)
+
+  category        FashionCategory?
+  pattern         PatternType?
+  fit             FitType?
+  style           StyleType?
+  season          SeasonType?
+
+  dominantColor   String?              @map("dominant_color") @db.VarChar(100)
+
+  confidence      Decimal?             @db.Decimal(5, 4)
+
+  attributes      Json?
+
+  errorMessage    String?              @map("error_message") @db.Text
+
+  startedAt       DateTime?            @map("started_at")
+  completedAt     DateTime?            @map("completed_at")
+
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+    fashionImage    FashionImage @relation(fields: [fashionImageId], references: [id], onDelete: Cascade)
+
+  @@index([fashionImageId])
+  @@index([status])
+  @@index([modelName, modelVersion])
+  @@map("vision_analyses")
+}
+enum TrendStatus {
+  EMERGING
+  GROWING
+  PEAK
+  DECLINING
+  STABLE
+}
+
+enum TrendSourceType {
+  SOCIAL_MEDIA
+  FASHION_CATALOG
+  RUNWAY
+  SEARCH_DATA
+  USER_BEHAVIOR
+  CURATED
+  OTHER
+}
+
+enum ForecastHorizon {
+  SHORT_TERM
+  MEDIUM_TERM
+  LONG_TERM
+}
+
+enum StudioGenerationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum StudioOutputType {
+  FASHION_CONCEPT
+  GRAPHIC_DESIGN
+  PATTERN
+  OUTFIT_VARIATION
+  STYLE_VARIATION
+  OTHER
+}
+
+model Trend {
+  id          String          @id @default(uuid()) @db.Uuid
+
+  name        String          @db.VarChar(200)
+  description String?         @db.Text
+
+  category    FashionCategory?
+  style       StyleType?
+  season      SeasonType?
+
+  status      TrendStatus     @default(EMERGING)
+  score       Decimal?        @db.Decimal(6, 4)
+
+  metadata    Json?
+
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  observations TrendObservation[]
+  forecasts    TrendForecast[]
+
+  @@index([category])
+  @@index([style])
+  @@index([season])
+  @@index([status])
+  @@map("trends")
+}
+
+model TrendObservation {
+  id              String          @id @default(uuid()) @db.Uuid
+  trendId         String          @map("trend_id") @db.Uuid
+
+  sourceType      TrendSourceType @map("source_type")
+  source          String?         @db.VarChar(200)
+
+  observationDate DateTime        @map("observation_date")
+
+  frequency       Int?
+  engagement      Decimal?        @db.Decimal(12, 4)
+  score           Decimal?        @db.Decimal(6, 4)
+
+  metadata        Json?
+
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  trend           Trend           @relation(fields: [trendId], references: [id], onDelete: Cascade)
+
+  @@index([trendId])
+  @@index([observationDate])
+  @@index([sourceType])
+  @@map("trend_observations")
+}
+
+model TrendForecast {
+  id             String          @id @default(uuid()) @db.Uuid
+  trendId        String          @map("trend_id") @db.Uuid
+
+  modelName      String          @map("model_name") @db.VarChar(150)
+  modelVersion   String          @map("model_version") @db.VarChar(50)
+
+  horizon        ForecastHorizon
+
+  forecastDate   DateTime        @map("forecast_date")
+  predictedScore Decimal?        @map("predicted_score") @db.Decimal(6, 4)
+  confidence     Decimal?        @db.Decimal(5, 4)
+
+  features       Json?
+  result         Json?
+
+  createdAt      DateTime        @default(now()) @map("created_at")
+
+  trend          Trend           @relation(fields: [trendId], references: [id], onDelete: Cascade)
+
+  @@index([trendId])
+  @@index([forecastDate])
+  @@index([modelName, modelVersion])
+  @@map("trend_forecasts")
+}
+model StudioGeneration {
+  id             String                 @id @default(uuid()) @db.Uuid
+  userId         String?                @map("user_id") @db.Uuid
+
+  status         StudioGenerationStatus @default(PENDING)
+  outputType     StudioOutputType
+
+  prompt         String                 @db.Text
+  negativePrompt String?                @map("negative_prompt") @db.Text
+
+  modelName      String                 @map("model_name") @db.VarChar(150)
+  modelVersion   String                 @map("model_version") @db.VarChar(50)
+
+  parameters     Json?
+  trendContext   Json?                 @map("trend_context")
+
+  errorMessage   String?                @map("error_message") @db.Text
+
+  startedAt      DateTime?              @map("started_at")
+  completedAt    DateTime?              @map("completed_at")
+
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @updatedAt @map("updated_at")
+
+  user           User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  outputs        StudioOutput[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([outputType])
+  @@index([modelName, modelVersion])
+  @@map("studio_generations")
+}
+model StudioOutput {
+  id             String           @id @default(uuid()) @db.Uuid
+  generationId   String           @map("generation_id") @db.Uuid
+
+  outputType     StudioOutputType
+
+  storageKey     String           @unique @map("storage_key") @db.VarChar(500)
+  imageUrl       String?          @map("image_url") @db.Text
+
+  mimeType       String           @db.VarChar(100)
+  fileSize       Int?             @map("file_size")
+
+  metadata       Json?
+
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  generation StudioGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+
+  @@index([generationId])
+  @@index([outputType])
+  @@map("studio_outputs")
+}
