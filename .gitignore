@@ -1,0 +1,44 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML / datasets
+data/raw/
+data/processed/
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.pth
+models/*.h5
+models/*.onnx
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# IDE / OS
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
