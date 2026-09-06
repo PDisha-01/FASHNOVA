@@ -12,6 +12,7 @@ import {
 import authRoutes from "./routes/auth.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import visionRoutes from "./routes/vision/vision.routes.js";
+import trendsRoutes from "./routes/trends/trends.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/vision", visionRoutes);
+app.use("/api/trends", trendsRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -3,33 +3,28 @@ import "../App.css";
 
 function Home() {
   return (
-    <div className="app">
+    <div className="fashnova-home">
       {/* =========================
           NAVBAR
       ========================= */}
-      <header className="navbar">
-        <Link to="/" className="brand">
-          <img
-            src="/logo.png"
-            alt="FASHNOVA logo"
-            className="brand-logo"
-          />
+      <header className="fashion-navbar">
+        <Link to="/" className="fashion-brand">
+          <img src="/logo.png" alt="FASHNOVA" />
 
-          <div className="brand-text">
-            <span>FASHNOVA</span>
-            <small>FASHION MEETS INTELLIGENCE</small>
+          <div>
+            <strong>FASHNOVA</strong>
+            <span>FASHION / INTELLIGENCE</span>
           </div>
         </Link>
 
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/vision">Vision</Link>
-          <Link to="/trends">Trends</Link>
-          <Link to="/studio">Studio</Link>
+        <nav className="fashion-nav-links">
+          <Link to="/vision">VISION</Link>
+          <Link to="/trends">TRENDS</Link>
+          <Link to="/studio">STUDIO</Link>
         </nav>
 
-        <Link to="/profile" className="profile-button">
-          Profile
+        <Link to="/profile" className="fashion-profile">
+          PROFILE <span>↗</span>
         </Link>
       </header>
 
@@ -37,478 +32,582 @@ function Home() {
         {/* =========================
             HERO
         ========================= */}
-        <section id="home" className="hero-section">
-          <div className="hero-content">
-            <p className="eyebrow">AI × ML × FASHION</p>
+        <section className="fashion-hero">
+          <div className="hero-background-number">01</div>
+
+          <div className="hero-left">
+            <div className="hero-kicker">
+              <span className="live-dot"></span>
+              AI × ML × GENERATIVE INTELLIGENCE
+            </div>
 
             <h1>
-              Fashion
+              FASHION
               <br />
-              Meets
-              <br />
-              <span>Intelligence.</span>
+              <em>Reimagine</em>
             </h1>
 
-            <p className="hero-description">
-              FASHNOVA combines computer vision, machine learning,
-              generative AI, and personalized recommendation intelligence
-              to understand fashion and shape what comes next.
+            <p className="hero-copy">
+              A new intelligence layer for fashion —
+              <br />
+              built to see, predict, create and personalize.
             </p>
 
-            <div className="hero-actions">
-              <Link to="/vision" className="primary-button">
-                Explore FASHNOVA
-                <span>→</span>
+            <div className="hero-buttons">
+              <Link to="/vision" className="hero-primary">
+                ENTER FASHNOVA
+                <span>↗</span>
               </Link>
 
-              
-            </div>
-
-            <div className="hero-tagline">
-              <span></span>
-              <p>FASHION MEETS INTELLIGENCE</p>
-              <span></span>
+              <Link to="/trends" className="hero-secondary">
+                EXPLORE TRENDS
+              </Link>
             </div>
           </div>
 
-          <div className="hero-visual">
-            <div className="hero-orbit orbit-one"></div>
-            <div className="hero-orbit orbit-two"></div>
-            <div className="hero-orbit orbit-three"></div>
+          <div className="hero-right">
+            <div className="hero-image-frame">
+              <div className="hero-image-glow"></div>
 
-            <div className="hero-glow"></div>
+              <div className="hero-orbit orbit-1"></div>
+              <div className="hero-orbit orbit-2"></div>
+              <div className="hero-orbit orbit-3"></div>
 
-            <img
-              src="/logo.png"
-              alt="FASHNOVA"
-              className="hero-logo-art"
-            />
+              <img
+                src="/logo.png"
+                alt="FASHNOVA intelligence"
+                className="hero-fashion-logo"
+              />
 
-            <span className="hero-dot dot-one"></span>
-            <span className="hero-dot dot-two"></span>
-            <span className="hero-dot dot-three"></span>
-
-            <div className="hero-visual-label">
-              <span>01</span>
-              <span>FASHION INTELLIGENCE</span>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================
-            INTELLIGENCE INTRO
-        ========================= */}
-        <section className="intelligence-section">
-          <div className="section-heading">
-            <p className="section-label">
-              INSIDE FASHNOVA
-            </p>
-
-            <h2>
-              A fashion system
-              <br />
-              <span>built on intelligence.</span>
-            </h2>
-
-            <p>
-              FASHNOVA does more than display fashion. It analyzes visual
-              information, learns from fashion data, generates new creative
-              possibilities, and uses those signals to create personalized
-              style intelligence.
-            </p>
-          </div>
-
-          <div className="intelligence-pipeline">
-            <div className="pipeline-step">
-              <span>01</span>
-              <strong>INPUT</strong>
-              <p>
-                Fashion images, trend data, user preferences, and creative
-                context.
-              </p>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            <div className="pipeline-step">
-              <span>02</span>
-              <strong>AI / ML PROCESSING</strong>
-              <p>
-                Computer vision, feature extraction, trend modeling, and
-                generative intelligence.
-              </p>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            <div className="pipeline-step">
-              <span>03</span>
-              <strong>FASHION INTELLIGENCE</strong>
-              <p>
-                Structured understanding of garments, trends, styles,
-                patterns, and creative possibilities.
-              </p>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            <div className="pipeline-step pipeline-highlight">
-              <span>04</span>
-              <strong>STYLE ENGINE</strong>
-              <p>
-                Personalized recommendations generated from combined
-                intelligence.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================
-            PILLARS
-        ========================= */}
-        <section className="pillars-section">
-          <div className="section-heading">
-            <p className="section-label">
-              THE FASHNOVA INTELLIGENCE
-            </p>
-
-            <h2>
-              Three pillars.
-              <br />
-              <span>One intelligence system.</span>
-            </h2>
-
-            <p>
-              Each pillar solves a different part of fashion intelligence.
-              Together they create the foundation for the Style Engine.
-            </p>
-          </div>
-
-          <div className="pillar-grid">
-            {/* VISION */}
-            <article className="pillar-card" id="vision">
-              <div className="pillar-top">
-                <span className="pillar-number">01</span>
-                <span className="pillar-word">ANALYZE</span>
+              <div className="floating-label label-top">
+                <span>VISION</span>
+                <strong>01</strong>
               </div>
 
-              <h3>VISION</h3>
+              <div className="floating-label label-right">
+                <span>TRENDS</span>
+                <strong>02</strong>
+              </div>
 
-              <p>
-                Computer vision transforms fashion images into structured
-                fashion information.
-              </p>
+              <div className="floating-label label-bottom">
+                <span>STUDIO</span>
+                <strong>03</strong>
+              </div>
 
-              <ul className="pillar-features">
-                <li>Garment detection</li>
-                <li>Clothing classification</li>
-                <li>Color & pattern recognition</li>
-                <li>Fit & style attributes</li>
-                <li>Outfit analysis</li>
-              </ul>
+              <div className="hero-cross cross-one">+</div>
+              <div className="hero-cross cross-two">+</div>
+              <div className="hero-cross cross-three">+</div>
+            </div>
 
-              <Link to="/vision">Explore Vision →</Link>
-            </article>
+            <div className="hero-side-caption">
+              <span>FASHNOVA / 001</span>
+              <span>FASHION INTELLIGENCE SYSTEM</span>
+            </div>
+          </div>
+
+          <div className="hero-bottom">
+            <span>SCROLL TO DISCOVER</span>
+            <div className="scroll-line"></div>
+            <span>2026</span>
+          </div>
+        </section>
+
+        {/* =========================
+            MANIFESTO
+        ========================= */}
+        <section className="manifesto-section">
+          <div className="manifesto-meta">
+            <span>THE IDEA</span>
+            <span>002</span>
+          </div>
+
+          <div className="manifesto-content">
+            <p className="manifesto-small">
+              FASHION HAS ALWAYS BEEN ABOUT
+              <br />
+              WHAT COMES NEXT.
+            </p>
+
+            <h2>
+              What if fashion
+              <br />
+              could <em>think?</em>
+            </h2>
+
+            <p className="manifesto-description">
+              FASHNOVA brings computer vision, machine learning,
+              generative AI and personalization into one connected
+              fashion intelligence system.
+            </p>
+          </div>
+        </section>
+
+        {/* =========================
+            INTELLIGENCE SYSTEM
+        ========================= */}
+        <section className="system-section">
+          <div className="system-header">
+            <div>
+              <span className="section-index">003 / SYSTEM</span>
+
+              <h2>
+                FOUR LAYERS.
+                <br />
+                <em>ONE MIND.</em>
+              </h2>
+            </div>
+
+            <p>
+              FASHNOVA doesn't treat AI as a collection of isolated
+              features. Every intelligence layer feeds the next.
+            </p>
+          </div>
+
+          <div className="system-flow">
+            {/* VISION */}
+            <Link to="/vision" className="system-card vision-card">
+              <div className="system-card-top">
+                <span>01</span>
+                <span>SEE</span>
+              </div>
+
+              <div className="system-card-center">
+                <div className="system-symbol">◉</div>
+
+                <h3>VISION</h3>
+
+                <p>
+                  Computer vision transforms fashion imagery
+                  into structured fashion intelligence.
+                </p>
+              </div>
+
+              <div className="system-card-bottom">
+                <span>GARMENTS</span>
+                <span>COLORS</span>
+                <span>STYLE</span>
+              </div>
+            </Link>
 
             {/* TRENDS */}
-            <article className="pillar-card" id="trends">
-              <div className="pillar-top">
-                <span className="pillar-number">02</span>
-                <span className="pillar-word">PREDICT</span>
+            <Link to="/trends" className="system-card trends-card">
+              <div className="system-card-top">
+                <span>02</span>
+                <span>PREDICT</span>
               </div>
 
-              <h3>TRENDS</h3>
+              <div className="system-card-center">
+                <div className="system-chart">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
 
-              <p>
-                Machine learning studies fashion signals to identify,
-                score, and forecast emerging trends.
-              </p>
+                <h3>TRENDS</h3>
 
-              <ul className="pillar-features">
-                <li>Trend detection</li>
-                <li>Trend scoring</li>
-                <li>Historical analysis</li>
-                <li>Seasonal patterns</li>
-                <li>Future forecasting</li>
-              </ul>
+                <p>
+                  Machine learning studies fashion signals
+                  to discover momentum and forecast what comes next.
+                </p>
+              </div>
 
-              <Link to="/trends">Explore Trends →</Link>
-            </article>
+              <div className="system-card-bottom">
+                <span>DATA</span>
+                <span>MOMENTUM</span>
+                <span>FORECAST</span>
+              </div>
+            </Link>
 
             {/* STUDIO */}
-            <article className="pillar-card" id="studio">
-              <div className="pillar-top">
-                <span className="pillar-number">03</span>
-                <span className="pillar-word">CREATE</span>
+            <Link to="/studio" className="system-card studio-card">
+              <div className="system-card-top">
+                <span>03</span>
+                <span>CREATE</span>
               </div>
 
-              <h3>STUDIO</h3>
+              <div className="system-card-center">
+                <div className="studio-symbol">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
 
-              <p>
-                Generative AI turns fashion concepts into new creative
-                directions, designs, and visual possibilities.
-              </p>
+                <h3>STUDIO</h3>
 
-              <ul className="pillar-features">
-                <li>Fashion concepts</li>
-                <li>Design generation</li>
-                <li>Graphics & patterns</li>
-                <li>Style variations</li>
-                <li>Trend-aware creation</li>
-              </ul>
+                <p>
+                  Generative intelligence turns fashion ideas
+                  into new visual possibilities.
+                </p>
+              </div>
 
-              <Link to="/studio">Open Studio →</Link>
-            </article>
+              <div className="system-card-bottom">
+                <span>CONCEPTS</span>
+                <span>GRAPHICS</span>
+                <span>DESIGNS</span>
+              </div>
+            </Link>
+
+            {/* STYLE ENGINE */}
+            <div className="system-card engine-card">
+              <div className="system-card-top">
+                <span>04</span>
+                <span>UNDERSTAND</span>
+              </div>
+
+              <div className="system-card-center">
+                <div className="engine-symbol">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+
+                <h3>STYLE ENGINE</h3>
+
+                <p>
+                  Vision + trends + creativity + personal
+                  preferences become personalized style intelligence.
+                </p>
+              </div>
+
+              <div className="system-card-bottom">
+                <span>RANK</span>
+                <span>PERSONALIZE</span>
+                <span>RECOMMEND</span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* =========================
-            VISION PREVIEW
+            EDITORIAL BREAK
         ========================= */}
-        <section className="capability-section">
-          <div className="capability-content">
-            <p className="section-label">01 / COMPUTER VISION</p>
+        <section className="editorial-section">
+          <div className="editorial-number">04</div>
+
+          <div className="editorial-main">
+            <span>NOT ANOTHER FASHION PLATFORM.</span>
 
             <h2>
-              See fashion
+              WE DON'T
               <br />
-              <span>as data.</span>
+              <em>FOLLOW</em>
+              <br />
+              TRENDS.
+            </h2>
+          </div>
+
+          <div className="editorial-side">
+            <div className="editorial-line"></div>
+
+            <p>
+              We study the signals behind them.
+            </p>
+
+            <span>
+              DATA / VISION / CREATIVITY
+            </span>
+          </div>
+        </section>
+
+        {/* =========================
+            VISION FEATURE
+        ========================= */}
+        <section className="feature-section feature-light">
+          <div className="feature-number">01</div>
+
+          <div className="feature-content">
+            <span className="feature-label">
+              COMPUTER VISION
+            </span>
+
+            <h2>
+              SEE
+              <br />
+              <em>FASHION.</em>
             </h2>
 
             <p>
-              Vision converts visual fashion information into structured
-              attributes that the rest of FASHNOVA can understand.
+              Upload a fashion image and let FASHNOVA
+              transform visual information into structured
+              fashion attributes.
             </p>
 
-            <div className="capability-list">
+            <div className="feature-tags">
               <span>GARMENTS</span>
               <span>COLORS</span>
-              <span>PATTERNS</span>
-              <span>FIT</span>
-              <span>STYLE</span>
+              <span>CATEGORIES</span>
               <span>SEASON</span>
+              <span>USAGE</span>
             </div>
 
-            <Link to="/vision" className="text-link">
-              Enter Vision →
+            <Link to="/vision" className="feature-link">
+              ENTER VISION <span>↗</span>
             </Link>
           </div>
 
-          <div className="capability-index">
-            <span>VISION</span>
-            <strong>01</strong>
+          <div className="feature-visual vision-visual">
+            <div className="scan-grid"></div>
+
+            <div className="scan-box">
+              <span>IMAGE INPUT</span>
+              <strong>ANALYZE</strong>
+            </div>
+
+            <div className="scan-point point-a"></div>
+            <div className="scan-point point-b"></div>
+            <div className="scan-point point-c"></div>
+
+            <div className="scan-label scan-label-a">
+              GARMENT
+            </div>
+
+            <div className="scan-label scan-label-b">
+              COLOR
+            </div>
           </div>
         </section>
 
         {/* =========================
-            TRENDS PREVIEW
+            TRENDS FEATURE
         ========================= */}
-        <section className="capability-section capability-reverse">
-          <div className="capability-content">
-            <p className="section-label">02 / MACHINE LEARNING</p>
+        <section className="feature-section feature-dark">
+          <div className="feature-visual trend-visual">
+            <div className="trend-grid"></div>
+
+            <div className="trend-line">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div className="trend-year year-one">2022</div>
+            <div className="trend-year year-two">2024</div>
+            <div className="trend-year year-three">2026</div>
+
+            <div className="trend-floating">
+              <span>FORECAST</span>
+              <strong>↑</strong>
+            </div>
+          </div>
+
+          <div className="feature-content">
+            <span className="feature-label">
+              MACHINE LEARNING
+            </span>
 
             <h2>
-              Understand
+              SEE
               <br />
-              <span>what's next.</span>
+              <em>WHAT'S NEXT.</em>
             </h2>
 
             <p>
-              Trends processes fashion signals across time to discover
-              patterns, measure momentum, and forecast emerging styles.
+              FASHNOVA studies fashion data across time,
+              detecting momentum and forecasting emerging
+              colors, categories and styles.
             </p>
 
-            <div className="capability-list">
-              <span>DATA</span>
-              <span>FEATURES</span>
-              <span>TRENDS</span>
+            <div className="feature-tags">
+              <span>TREND DETECTION</span>
               <span>MOMENTUM</span>
               <span>SEASONALITY</span>
-              <span>FORECAST</span>
+              <span>FORECASTING</span>
             </div>
 
-            <Link to="/trends" className="text-link">
-              Enter Trends →
+            <Link to="/trends" className="feature-link">
+              ENTER TRENDS <span>↗</span>
             </Link>
-          </div>
-
-          <div className="capability-index">
-            <span>TRENDS</span>
-            <strong>02</strong>
           </div>
         </section>
 
         {/* =========================
-            STUDIO PREVIEW
+            STUDIO FEATURE
         ========================= */}
-        <section className="capability-section">
-          <div className="capability-content">
-            <p className="section-label">03 / GENERATIVE AI</p>
+        <section className="feature-section feature-light studio-feature">
+          <div className="feature-number">03</div>
+
+          <div className="feature-content">
+            <span className="feature-label">
+              GENERATIVE AI
+            </span>
 
             <h2>
-              Create
+              CREATE
               <br />
-              <span>new possibilities.</span>
+              <em>WHAT'S NEXT.</em>
             </h2>
 
             <p>
-              Studio uses generative intelligence to explore concepts,
-              patterns, graphics, and style variations while remaining
-              connected to fashion trends.
+              Studio transforms creative direction into
+              visual fashion possibilities — from concepts
+              and graphics to patterns and style variations.
             </p>
 
-            <div className="capability-list">
+            <div className="feature-tags">
               <span>CONCEPTS</span>
               <span>DESIGNS</span>
               <span>GRAPHICS</span>
               <span>PATTERNS</span>
-              <span>VARIATIONS</span>
-              <span>CREATION</span>
             </div>
 
-            <Link to="/studio" className="text-link">
-              Enter Studio →
+            <Link to="/studio" className="feature-link">
+              ENTER STUDIO <span>↗</span>
             </Link>
           </div>
 
-          <div className="capability-index">
-            <span>STUDIO</span>
-            <strong>03</strong>
+          <div className="feature-visual studio-visual">
+            <div className="studio-ring ring-a"></div>
+            <div className="studio-ring ring-b"></div>
+            <div className="studio-ring ring-c"></div>
+
+            <div className="studio-center">
+              <span>GENERATE</span>
+              <strong>✦</strong>
+            </div>
+
+            <div className="studio-orbit-label">
+              CONCEPT
+            </div>
+
+            <div className="studio-orbit-label second">
+              STYLE
+            </div>
+
+            <div className="studio-orbit-label third">
+              PATTERN
+            </div>
           </div>
         </section>
 
         {/* =========================
             STYLE ENGINE
         ========================= */}
-        <section className="engine-section">
-          <div className="engine-content">
-            <p className="section-label">
-              THE CORE INTELLIGENCE
-            </p>
+        <section className="style-engine-section">
+          <div className="engine-intro">
+            <span>05 / THE CORE</span>
 
             <h2>
               STYLE
               <br />
-              <span>ENGINE</span>
+              <em>ENGINE.</em>
             </h2>
 
-            <p className="engine-description">
-              The Style Engine is where FASHNOVA's intelligence comes
-              together. It combines visual understanding, trend forecasts,
-              creative signals, and user preferences to produce
-              personalized fashion recommendations.
+            <p>
+              This is where FASHNOVA becomes personal.
+            </p>
+          </div>
+
+          <div className="engine-visual">
+            <div className="engine-orbit outer-orbit"></div>
+            <div className="engine-orbit middle-orbit"></div>
+            <div className="engine-orbit inner-orbit"></div>
+
+            <div className="engine-node node-vision">
+              <span>01</span>
+              VISION
+            </div>
+
+            <div className="engine-node node-trends">
+              <span>02</span>
+              TRENDS
+            </div>
+
+            <div className="engine-node node-studio">
+              <span>03</span>
+              STUDIO
+            </div>
+
+            <div className="engine-node node-user">
+              <span>04</span>
+              YOU
+            </div>
+
+            <div className="engine-core">
+              <span>FASHNOVA</span>
+              <strong>STYLE<br />ENGINE</strong>
+            </div>
+          </div>
+
+          <div className="engine-bottom">
+            <span>VISION</span>
+            <b>+</b>
+            <span>TRENDS</span>
+            <b>+</b>
+            <span>STUDIO</span>
+            <b>+</b>
+            <span>YOU</span>
+            <b>→</b>
+            <strong>YOUR STYLE</strong>
+          </div>
+        </section>
+
+        {/* =========================
+            FINAL STATEMENT
+        ========================= */}
+        <section className="final-section">
+          <div className="final-top">
+            <span>FASHNOVA / 2026</span>
+            <span>FASHION INTELLIGENCE</span>
+          </div>
+
+          <div className="final-content">
+            <p>
+              THE FUTURE OF FASHION
+              <br />
+              ISN'T SOMETHING TO FOLLOW.
             </p>
 
-            <div className="engine-flow">
-              <div>
-                <span>01</span>
-                <strong>VISION</strong>
-              </div>
-
-              <b>+</b>
-
-              <div>
-                <span>02</span>
-                <strong>TRENDS</strong>
-              </div>
-
-              <b>+</b>
-
-              <div>
-                <span>03</span>
-                <strong>STUDIO</strong>
-              </div>
-
-              <b>+</b>
-
-              <div>
-                <span>04</span>
-                <strong>USER PROFILE</strong>
-              </div>
-
-              <b>→</b>
-
-              <div className="engine-result">
-                <span>CORE</span>
-                <strong>STYLE ENGINE</strong>
-              </div>
-            </div>
-
-            <div className="engine-output">
-              <span>INTELLIGENCE OUTPUT</span>
-
-              <div>
-                <strong>PERSONALIZED STYLE RECOMMENDATIONS</strong>
-                <p>
-                  Ranked using fashion understanding, current trends,
-                  generated possibilities, and individual preferences.
-                </p>
-              </div>
-            </div>
+            <h2>
+              <span>UNDERSTAND.</span>
+              <br />
+              <em>PREDICT.</em>
+              <br />
+              CREATE.
+            </h2>
           </div>
-        </section>
 
-        {/* =========================
-            FINAL CTA
-        ========================= */}
-        <section className="cta-section">
-          <p className="section-label">
-            FASHNOVA / FASHION INTELLIGENCE
-          </p>
+          <Link to="/vision" className="final-button">
+            BEGIN EXPLORING
+            <span>↗</span>
+          </Link>
 
-          <h2>
-            Don't just follow
-            <br />
-            <span>fashion.</span>
-          </h2>
-
-          <p>
-            Understand it. Predict it. Create it. Personalize it.
-          </p>
-
-          <div className="cta-actions">
-            <Link to="/vision" className="primary-button">
-              Start Exploring
-              <span>→</span>
-            </Link>
-
-            <Link to="/trends" className="secondary-button">
-              Discover Trends
-            </Link>
+          <div className="final-bottom">
+            <span>FASHION MEETS INTELLIGENCE</span>
+            <span>FASHNOVA © 2026</span>
           </div>
-        </section>
-
-        {/* =========================
-            BRAND STATEMENT
-        ========================= */}
-        <section className="statement-section">
-          <div className="statement-line"></div>
-
-          <p>FASHION MEETS INTELLIGENCE</p>
-
-          <h2>
-            Understand your style.
-            <br />
-            <span>Shape what's next.</span>
-          </h2>
-
-          <div className="statement-line"></div>
         </section>
       </main>
 
       {/* =========================
           FOOTER
       ========================= */}
-      <footer>
-        <div className="footer-brand">
-          <span>FASHNOVA</span>
-          <p>FASHION MEETS INTELLIGENCE</p>
+      <footer className="fashion-footer">
+        <div className="footer-logo">
+          <img src="/logo.png" alt="FASHNOVA" />
+
+          <div>
+            <strong>FASHNOVA</strong>
+            <span>FASHION MEETS INTELLIGENCE</span>
+          </div>
         </div>
 
-        <p>AI + ML Fashion Intelligence Platform</p>
+        <div className="footer-links">
+          <Link to="/vision">VISION</Link>
+          <Link to="/trends">TRENDS</Link>
+          <Link to="/studio">STUDIO</Link>
+          <Link to="/profile">PROFILE</Link>
+        </div>
 
-        <span>© 2026 FASHNOVA</span>
-        <span>all rights reserved</span>
+        <div className="footer-copy">
+          <span>AI + ML FASHION INTELLIGENCE PLATFORM</span>
+          <span>© 2026</span>
+        </div>
       </footer>
     </div>
   );

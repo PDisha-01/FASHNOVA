@@ -1,5 +1,5 @@
-import torch
-import torch.nn as nn
+import torch  # type: ignore[reportMissingImports]  # noqa: F401
+import torch.nn as nn  # type: ignore[reportMissingImports]
 from transformers import CLIPModel  # type: ignore[reportMissingImports]
 
 
@@ -19,28 +19,20 @@ class AttributeHead(nn.Module):
         return self.net(x)
 
 
-class ColorBranch(nn.Module):
+class ColorBranch(nn.Sequential):
     def __init__(
         self,
         color_feature_dim: int,
-        hidden_dim: int,
         num_classes: int,
         dropout: float,
     ):
-        super().__init__()
-
-        self.net = nn.Sequential(
+        super().__init__(
             nn.LayerNorm(color_feature_dim),
             nn.Linear(color_feature_dim, 64),
             nn.ReLU(),
             nn.Dropout(dropout),
             nn.Linear(64, num_classes),
         )
-
-    def forward(self, x):
-        return self.net(x)
-
-
 class CLIPMultiTaskClassifierV2(nn.Module):
     def __init__(
         self,
@@ -55,6 +47,7 @@ class CLIPMultiTaskClassifierV2(nn.Module):
             "openai/clip-vit-base-patch32"
         )
 
+        # Every task, including baseColour, has its own attribute head.
         self.heads = nn.ModuleDict({
             task: AttributeHead(
                 hidden_dim=hidden_dim,
@@ -62,16 +55,16 @@ class CLIPMultiTaskClassifierV2(nn.Module):
                 dropout=dropout,
             )
             for task, num_classes in task_num_classes.items()
-            if task != "baseColour"
         })
 
+        # Additional dedicated color branch.
         self.color_branch = ColorBranch(
             color_feature_dim=color_feature_dim,
-            hidden_dim=64,
             num_classes=task_num_classes["baseColour"],
             dropout=dropout,
         )
 
+        # Hierarchical residual connections.
         self.master_to_sub = nn.Linear(
             task_num_classes["masterCategory"],
             task_num_classes["subCategory"],
@@ -97,20 +90,21 @@ class CLIPMultiTaskClassifierV2(nn.Module):
         )
 
     def forward(self, pixel_values, color_features):
-        clip_output = self.clip.get_image_features(
-            pixel_values=pixel_values
-        )
+        clip_output = self.clip.get_image_features(pixel_values=pixel_values)
 
-        # CLIP image projection produces the feature representation.
-        image_features = clip_output
+        if hasattr(clip_output, "pooler_output"):
+            image_features = clip_output.pooler_output
+        else:
+            image_features = clip_output
 
-        # Normalize only for the CLIP representation.
+        # Normalize the CLIP representation.
         image_features = image_features / (
             image_features.norm(dim=-1, keepdim=True) + 1e-8
         )
 
         outputs = {}
 
+        # Base predictions for every task.
         for task, head in self.heads.items():
             outputs[task] = head(image_features)
 
@@ -136,6 +130,9 @@ class CLIPMultiTaskClassifierV2(nn.Module):
         )
 
         # Dedicated color branch.
-        outputs["baseColour"] = self.color_branch(color_features)
+        outputs["baseColour"] = (
+            outputs["baseColour"]
+            + self.color_branch(color_features)
+        )
 
         return outputs

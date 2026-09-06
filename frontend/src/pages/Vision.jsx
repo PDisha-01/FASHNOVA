@@ -582,108 +582,302 @@ function Vision() {
 
 
           {/* =========================
-              ANALYSIS RESULT PANEL
-          ========================= */}
+    ANALYSIS RESULT PANEL
+========================= */}
 
-          {selectedImage && (
-            <div className="vision-analysis-result">
+{selectedImage && (
+  <div className="vision-analysis-result">
 
-              <div className="vision-analysis-result-header">
+    <div className="vision-analysis-result-header">
 
-                <div>
-                  <span>VISION ANALYSIS</span>
+      <div>
+        <span>VISION ANALYSIS</span>
 
-                  <h3>
-                    {uploadStatus === "complete"
-                      ? "Analysis complete."
-                      : "Analysis in progress."}
-                  </h3>
+        <h3>
+          {analysis
+            ? "Fashion attributes detected."
+            : "Analysis in progress."}
+        </h3>
+      </div>
+
+      <strong
+        className={`vision-result-status ${
+          analysis?.status?.toLowerCase() || "processing"
+        }`}
+      >
+        {analysis?.status || "PROCESSING"}
+      </strong>
+
+    </div>
+
+
+    {/* =========================
+        MODEL ATTRIBUTES
+    ========================= */}
+
+    {analysis?.attributes ? (
+      <div className="vision-model-results">
+
+        <div className="vision-results-intro">
+          <div>
+            <span>AI DETECTION RESULTS</span>
+
+            <h4>
+              What the Vision model sees
+            </h4>
+          </div>
+
+          <p>
+            FASHNOVA Vision extracted structured fashion
+            attributes from your image.
+          </p>
+        </div>
+
+
+        <div className="vision-result-grid">
+
+          {/* GENDER */}
+          <article className="vision-result-item">
+            <span>GENDER</span>
+
+            <strong>
+              {analysis.attributes.gender?.label || "—"}
+            </strong>
+
+            {analysis.attributes.gender?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.gender.confidence * 100
+                      }%`,
+                    }}
+                  />
                 </div>
 
-                <strong>
-                  {analysis?.status || "PROCESSING"}
-                </strong>
-
+                <small>
+                  {(analysis.attributes.gender.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
               </div>
+            )}
+          </article>
 
 
-              <div className="vision-result-grid">
+          {/* MASTER CATEGORY */}
+          <article className="vision-result-item">
+            <span>CATEGORY</span>
 
-                <article>
-                  <span>CATEGORY</span>
+            <strong>
+              {analysis.attributes.masterCategory?.label || "—"}
+            </strong>
 
-                  <strong>
-                    {analysis?.category || "—"}
-                  </strong>
-                </article>
+            {analysis.attributes.masterCategory?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.masterCategory.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
 
-                <article>
-                  <span>COLOR</span>
-
-                  <strong>
-                    {analysis?.dominantColor || "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>PATTERN</span>
-
-                  <strong>
-                    {analysis?.pattern || "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>FIT</span>
-
-                  <strong>
-                    {analysis?.fit || "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>STYLE</span>
-
-                  <strong>
-                    {analysis?.style || "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>SEASON</span>
-
-                  <strong>
-                    {analysis?.season || "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>CONFIDENCE</span>
-
-                  <strong>
-                    {analysis?.confidence
-                      ? `${analysis.confidence * 100}%`
-                      : "—"}
-                  </strong>
-                </article>
-
-                <article>
-                  <span>ATTRIBUTES</span>
-
-                  <strong>
-                    {analysis?.attributes
-                      ? "EXTRACTED"
-                      : "WAITING"}
-                  </strong>
-                </article>
-
+                <small>
+                  {(analysis.attributes.masterCategory.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
               </div>
+            )}
+          </article>
 
+
+          {/* SUBCATEGORY */}
+          <article className="vision-result-item">
+            <span>SUBCATEGORY</span>
+
+            <strong>
+              {analysis.attributes.subCategory?.label || "—"}
+            </strong>
+
+            {analysis.attributes.subCategory?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.subCategory.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
+
+                <small>
+                  {(analysis.attributes.subCategory.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
+              </div>
+            )}
+          </article>
+
+
+          {/* ARTICLE TYPE */}
+          <article className="vision-result-item">
+            <span>ARTICLE TYPE</span>
+
+            <strong>
+              {analysis.attributes.articleType?.label || "—"}
+            </strong>
+
+            {analysis.attributes.articleType?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.articleType.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
+
+                <small>
+                  {(analysis.attributes.articleType.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
+              </div>
+            )}
+          </article>
+
+
+          {/* BASE COLOUR */}
+          <article className="vision-result-item">
+            <span>BASE COLOUR</span>
+
+            <div className="vision-color-result">
+              <span className="vision-color-dot" />
+
+              <strong>
+                {analysis.attributes.baseColour?.label || "—"}
+              </strong>
             </div>
-          )}
 
-        </section>
+            {analysis.attributes.baseColour?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.baseColour.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
 
+                <small>
+                  {(analysis.attributes.baseColour.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
+              </div>
+            )}
+          </article>
+
+
+          {/* SEASON */}
+          <article className="vision-result-item">
+            <span>SEASON</span>
+
+            <strong>
+              {analysis.attributes.season?.label || "—"}
+            </strong>
+
+            {analysis.attributes.season?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.season.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
+
+                <small>
+                  {(analysis.attributes.season.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
+              </div>
+            )}
+          </article>
+
+
+          {/* USAGE */}
+          <article className="vision-result-item">
+            <span>USAGE</span>
+
+            <strong>
+              {analysis.attributes.usage?.label || "—"}
+            </strong>
+
+            {analysis.attributes.usage?.confidence != null && (
+              <div className="vision-confidence">
+                <div className="vision-confidence-bar">
+                  <span
+                    style={{
+                      width: `${
+                        analysis.attributes.usage.confidence * 100
+                      }%`,
+                    }}
+                  />
+                </div>
+
+                <small>
+                  {(analysis.attributes.usage.confidence * 100).toFixed(1)}%
+                  confidence
+                </small>
+              </div>
+            )}
+          </article>
+
+
+          {/* MODEL */}
+          <article className="vision-result-item vision-result-model">
+            <span>VISION MODEL</span>
+
+            <strong>
+              {analysis.modelName || "FASHNOVA VISION"}
+            </strong>
+
+            <small>
+              Version {analysis.modelVersion || "—"}
+            </small>
+          </article>
+
+        </div>
+
+      </div>
+    ) : (
+      <div className="vision-results-empty">
+        <span>VISION ENGINE</span>
+
+        <strong>
+          Waiting for model output...
+        </strong>
+
+        <p>
+          The structured fashion attributes will appear here
+          once the Vision model completes inference.
+        </p>
+      </div>
+    )}
+
+  </div>
+)}
+
+  </section>
 
         {/* =========================
             STYLE ENGINE CONNECTION
