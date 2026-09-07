@@ -99,6 +99,8 @@ model User {
 preferences  UserPreference?
 fashionItems FashionItem[]
 studioGenerations StudioGeneration[]
+styleRecommendationRequests StyleRecommendationRequest[]
+styleRecommendationFeedback StyleRecommendationFeedback[]
 
   @@map("users")
 }
@@ -395,4 +397,87 @@ model StudioOutput {
   @@index([generationId])
   @@index([outputType])
   @@map("studio_outputs")
+}
+
+// -----------------------------------------------------------------------------
+// STYLE ENGINE
+// -----------------------------------------------------------------------------
+
+enum RecommendationFeedbackType {
+  LIKE
+  DISLIKE
+  SAVE
+  SKIP
+}
+
+model StyleRecommendationRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+
+  requestContext Json? @map("request_context")
+  visionContext  Json? @map("vision_context")
+  trendContext   Json? @map("trend_context")
+
+  candidateCount Int    @map("candidate_count")
+  topK           Int    @map("top_k")
+
+  modelName    String   @map("model_name") @db.VarChar(150)
+  modelVersion String?  @map("model_version") @db.VarChar(50)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user           User?                         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  recommendations StyleRecommendation[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("style_recommendation_requests")
+}
+
+model StyleRecommendation {
+  id          String   @id @default(uuid()) @db.Uuid
+  requestId   String   @map("request_id") @db.Uuid
+
+  candidateId String   @map("candidate_id") @db.VarChar(150)
+  candidateName String @map("candidate_name") @db.VarChar(250)
+
+  score      Decimal @db.Decimal(6, 2)
+  confidence String  @db.VarChar(20)
+
+  scoreBreakdown Json? @map("score_breakdown")
+  reasons        Json?
+  trendAlignment Json? @map("trend_alignment")
+
+  rank Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request StyleRecommendationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  feedback StyleRecommendationFeedback[]
+
+  @@index([requestId])
+  @@index([candidateId])
+  @@index([score])
+  @@map("style_recommendations")
+}
+
+model StyleRecommendationFeedback {
+  id             String                     @id @default(uuid()) @db.Uuid
+  recommendationId String                   @map("recommendation_id") @db.Uuid
+  userId         String?                    @map("user_id") @db.Uuid
+
+  feedbackType RecommendationFeedbackType   @map("feedback_type")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  recommendation StyleRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+
+ user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([recommendationId])
+  @@index([userId])
+  @@index([feedbackType])
+  @@index([createdAt])
+  @@map("style_recommendation_feedback")
 }

@@ -119,6 +119,7 @@ function Studio() {
           <Link to="/vision">Vision</Link>
           <Link to="/trends">Trends</Link>
           <Link to="/studio">Studio</Link>
+           <Link to="/style-engine">Style Engine</Link>
         </nav>
 
         <Link to="/profile" className="profile-button">

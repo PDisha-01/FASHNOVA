@@ -18,10 +18,11 @@ function Home() {
         </Link>
 
         <nav className="fashion-nav-links">
-          <Link to="/vision">VISION</Link>
-          <Link to="/trends">TRENDS</Link>
-          <Link to="/studio">STUDIO</Link>
-        </nav>
+  <Link to="/vision">VISION</Link>
+  <Link to="/trends">TRENDS</Link>
+  <Link to="/studio">STUDIO</Link>
+  <Link to="/style-engine">STYLE ENGINE</Link>
+</nav>
 
         <Link to="/profile" className="fashion-profile">
           PROFILE <span>↗</span>
@@ -251,7 +252,7 @@ function Home() {
             </Link>
 
             {/* STYLE ENGINE */}
-            <div className="system-card engine-card">
+            <Link to="/style-engine" className="system-card engine-card">
               <div className="system-card-top">
                 <span>04</span>
                 <span>UNDERSTAND</span>
@@ -277,7 +278,7 @@ function Home() {
                 <span>PERSONALIZE</span>
                 <span>RECOMMEND</span>
               </div>
-            </div>
+            </Link>
           </div>
         </section>
 
@@ -601,6 +602,7 @@ function Home() {
           <Link to="/vision">VISION</Link>
           <Link to="/trends">TRENDS</Link>
           <Link to="/studio">STUDIO</Link>
+          <Link to="/style-engine">STYLE ENGINE</Link>
           <Link to="/profile">PROFILE</Link>
         </div>
 

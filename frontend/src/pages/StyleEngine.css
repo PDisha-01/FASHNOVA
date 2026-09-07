@@ -1,0 +1,366 @@
+.style-engine-page {
+  min-height: 100vh;
+  background: #f6f0e9;
+  color: #321322;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.style-engine-page .style-engine-navbar {
+  width: 100%;
+  padding: 24px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(111, 48, 72, 0.12);
+  background: #fbf8f4;
+}
+
+.style-engine-page .style-engine-brand {
+  color: #3b1027;
+  text-decoration: none;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.style-engine-page .style-engine-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.style-engine-page .style-engine-nav-links a {
+  color: #765d67;
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s ease;
+}
+
+.style-engine-page .style-engine-nav-links a:hover {
+  color: #3b1027;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.style-engine-page .style-engine-hero {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 90px 6% 100px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.style-engine-page .style-engine-hero-content {
+  max-width: 620px;
+}
+
+.style-engine-page .style-engine-eyebrow {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: #6f3048;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.style-engine-page .style-engine-hero h1 {
+  margin: 0;
+  color: #3b1027;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(3.2rem, 6vw, 5.8rem);
+  line-height: 0.98;
+  font-weight: 500;
+}
+
+.style-engine-page .style-engine-hero-content > p {
+  max-width: 560px;
+  margin: 30px 0;
+  color: #765d67;
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+.style-engine-page .style-engine-primary-button {
+  border: 0;
+  padding: 15px 26px;
+  background: #3b1027;
+  color: #fffdf9;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.style-engine-page .style-engine-primary-button:hover {
+  background: #6f3048;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   INTELLIGENCE CARD
+========================= */
+
+.style-engine-page .style-engine-intelligence-card {
+  padding: 42px;
+  background: #fffdf9;
+  border: 1px solid rgba(111, 48, 72, 0.14);
+}
+
+.style-engine-page .style-engine-intelligence-card > span {
+  color: #a9546c;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.style-engine-page .style-engine-flow {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.style-engine-page .style-engine-flow-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.style-engine-page .style-engine-flow-item strong {
+  display: block;
+  color: #3b1027;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.style-engine-page .style-engine-flow-item small {
+  display: block;
+  margin-top: 7px;
+  color: #8a7079;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.style-engine-page .style-engine-flow-line {
+  width: 24px;
+  height: 1px;
+  flex-shrink: 0;
+  background: rgba(111, 48, 72, 0.25);
+}
+
+.style-engine-page .style-engine-flow-result {
+  margin-top: 42px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(111, 48, 72, 0.14);
+}
+
+.style-engine-page .style-engine-flow-result span {
+  display: block;
+  margin-bottom: 8px;
+  color: #a9546c;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.style-engine-page .style-engine-flow-result strong {
+  color: #3b1027;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.style-engine-page .style-engine-context-section,
+.style-engine-page .style-engine-recommendation-section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 6%;
+}
+
+.style-engine-page .style-engine-recommendation-section {
+  padding-top: 40px;
+  padding-bottom: 120px;
+}
+
+.style-engine-page .style-engine-section-heading {
+  max-width: 680px;
+  margin-bottom: 42px;
+}
+
+.style-engine-page .style-engine-section-heading > span {
+  display: block;
+  margin-bottom: 14px;
+  color: #a9546c;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.style-engine-page .style-engine-section-heading h2 {
+  margin: 0;
+  color: #3b1027;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.style-engine-page .style-engine-section-heading p {
+  margin-top: 16px;
+  color: #765d67;
+  line-height: 1.7;
+}
+
+/* =========================
+   CONTEXT CARDS
+========================= */
+
+.style-engine-page .style-engine-context-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.style-engine-page .style-engine-context-card {
+  padding: 26px;
+  background: #fffdf9;
+  border: 1px solid rgba(111, 48, 72, 0.14);
+}
+
+.style-engine-page .style-engine-context-card span {
+  display: block;
+  margin-bottom: 18px;
+  color: #8a7079;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.style-engine-page .style-engine-context-card button {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid rgba(111, 48, 72, 0.18);
+  background: transparent;
+  color: #3b1027;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+/* =========================
+   EMPTY RECOMMENDATION STATE
+========================= */
+
+.style-engine-page .style-engine-empty-state {
+  padding: 75px 40px;
+  text-align: center;
+  background: #fffdf9;
+  border: 1px solid rgba(111, 48, 72, 0.14);
+}
+
+.style-engine-page .style-engine-empty-state > span {
+  color: #a9546c;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.style-engine-page .style-engine-empty-state h3 {
+  margin: 18px auto 12px;
+  max-width: 550px;
+  color: #3b1027;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.style-engine-page .style-engine-empty-state p {
+  max-width: 620px;
+  margin: 0 auto;
+  color: #765d67;
+  line-height: 1.7;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .style-engine-page .style-engine-hero {
+    grid-template-columns: 1fr;
+    gap: 50px;
+    padding-top: 65px;
+  }
+
+  .style-engine-page .style-engine-context-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .style-engine-page .style-engine-navbar {
+    padding: 20px 5%;
+  }
+
+  .style-engine-page .style-engine-nav-links {
+    gap: 14px;
+  }
+
+  .style-engine-page .style-engine-nav-links a {
+    font-size: 0.76rem;
+  }
+
+  .style-engine-page .style-engine-hero {
+    padding: 60px 5% 70px;
+  }
+
+  .style-engine-page .style-engine-hero h1 {
+    font-size: 3.2rem;
+  }
+
+  .style-engine-page .style-engine-intelligence-card {
+    padding: 28px;
+  }
+
+  .style-engine-page .style-engine-flow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .style-engine-page .style-engine-flow-line {
+    width: 1px;
+    height: 18px;
+    margin-left: 8px;
+  }
+
+  .style-engine-page .style-engine-context-section,
+  .style-engine-page .style-engine-recommendation-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .style-engine-page .style-engine-context-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .style-engine-page .style-engine-empty-state {
+    padding: 55px 24px;
+  }
+}

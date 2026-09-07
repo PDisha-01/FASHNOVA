@@ -31,6 +31,10 @@ const envSchema = z.object({
   .url()
   .default("http://127.0.0.1:8002"),
 
+  STYLE_ENGINE_ML_URL: z
+  .url()
+  .default("http://127.0.0.1:8003"),
+
   DATABASE_URL: z
     .string()
     .min(1, "DATABASE_URL is required"),

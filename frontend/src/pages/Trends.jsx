@@ -279,6 +279,7 @@ function Trends() {
           <Link to="/vision">Vision</Link>
           <Link to="/trends">Trends</Link>
           <Link to="/studio">Studio</Link>
+           <Link to="/style-engine">STYLE ENGINE</Link>
         </nav>
 
         <Link to="/profile" className="profile-button">

@@ -14,6 +14,7 @@ import profileRoutes from "./routes/profile.routes.js";
 import visionRoutes from "./routes/vision/vision.routes.js";
 import trendsRoutes from "./routes/trends/trends.routes.js";
 import studioRoutes from "./routes/studio/studio.routes.js";
+import styleEngineRoutes from "./routes/style-engine/style-engine.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +49,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/vision", visionRoutes);
 app.use("/api/trends", trendsRoutes);
 app.use("/api/studio", studioRoutes);
+app.use("/api/style-engine", styleEngineRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

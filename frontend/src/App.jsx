@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Vision from "./pages/Vision";
 import Trends from "./pages/Trends";
 import Studio from "./pages/Studio";
+import StyleEngine from "./pages/StyleEngine";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -14,6 +15,7 @@ function App() {
       <Route path="/vision" element={<Vision />} />
       <Route path="/trends" element={<Trends />} />
       <Route path="/studio" element={<Studio />} />
+      <Route path="/style-engine" element={<StyleEngine />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/login" element={<Login />} />
 <Route path="/register" element={<Register />} />
