@@ -1,16 +1,23 @@
 import base64
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
 
 
-load_dotenv()
+STUDIO_ROOT = Path(__file__).resolve().parents[1]
+ENV_FILE = STUDIO_ROOT / ".env"
+
+load_dotenv(ENV_FILE)
 
 
 class GeminiStudioService:
+    """Handles communication with the Gemini image-generation API."""
+
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
+
         self.model = os.getenv(
             "STUDIO_MODEL",
             "gemini-3.1-flash-image",
