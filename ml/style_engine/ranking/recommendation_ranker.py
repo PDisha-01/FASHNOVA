@@ -14,7 +14,8 @@ class RecommendationRanker:
     Scores, ranks, and explains fashion candidates.
 
     The ranker does not generate candidates.
-    It only evaluates and orders candidates supplied to it.
+    It evaluates, orders, and diversifies candidates
+    supplied by the Style Engine.
     """
 
     def rank(
@@ -23,7 +24,11 @@ class RecommendationRanker:
         context: dict[str, Any],
         top_k: int = 10,
     ) -> list[Recommendation]:
-        scored_recommendations = []
+        scored_recommendations: list[Recommendation] = []
+
+        # --------------------------------------------------------------
+        # 1. Score every candidate
+        # --------------------------------------------------------------
 
         for candidate in candidates:
             score, breakdown = recommendation_scorer.score(
@@ -59,12 +64,86 @@ class RecommendationRanker:
                 )
             )
 
+        # --------------------------------------------------------------
+        # 2. Sort by recommendation score
+        # --------------------------------------------------------------
+
         scored_recommendations.sort(
             key=lambda recommendation: recommendation.score,
             reverse=True,
         )
 
-        return scored_recommendations[:top_k]
+        # --------------------------------------------------------------
+        # 3. Diversity-aware selection
+        #
+        # Prefer different fashion types in the first pass.
+        # This prevents:
+        #
+        # Jackets
+        # Jackets
+        # Jackets
+        # Free Gifts
+        # Free Gifts
+        #
+        # from becoming the Top 5.
+        # --------------------------------------------------------------
+
+        selected: list[Recommendation] = []
+        used_names: set[str] = set()
+
+        for recommendation in scored_recommendations:
+            normalized_name = self._normalize(
+                recommendation.name
+            )
+
+            if not normalized_name:
+                normalized_name = "fashion-item"
+
+            if normalized_name in used_names:
+                continue
+
+            selected.append(recommendation)
+            used_names.add(normalized_name)
+
+            if len(selected) >= top_k:
+                break
+
+        # --------------------------------------------------------------
+        # 4. Fill remaining positions if unique types are insufficient
+        # --------------------------------------------------------------
+
+        if len(selected) < top_k:
+            selected_ids = {
+                recommendation.candidate_id
+                for recommendation in selected
+            }
+
+            for recommendation in scored_recommendations:
+                if recommendation.candidate_id in selected_ids:
+                    continue
+
+                selected.append(recommendation)
+
+                if len(selected) >= top_k:
+                    break
+
+        # --------------------------------------------------------------
+        # 5. Debug output
+        # --------------------------------------------------------------
+
+        print(
+            "STYLE ENGINE FINAL RANKING:",
+            [
+                {
+                    "id": recommendation.candidate_id,
+                    "name": recommendation.name,
+                    "score": recommendation.score,
+                }
+                for recommendation in selected
+            ],
+        )
+
+        return selected
 
     # ------------------------------------------------------------------
     # Recommendation explanations
@@ -81,27 +160,27 @@ class RecommendationRanker:
         feature_messages = [
             (
                 breakdown.color_compatibility,
-                "Strong color compatibility with your preferences."
+                "Matches the requested color palette.",
             ),
             (
                 breakdown.category_compatibility,
-                "Matches the requested fashion category."
+                "Matches the requested fashion category.",
             ),
             (
                 breakdown.season_compatibility,
-                "Suitable for the requested season."
+                "Suitable for the requested season.",
             ),
             (
                 breakdown.aesthetic_compatibility,
-                "Aligns with the requested or preferred aesthetic."
+                "Aligns with the requested or preferred aesthetic.",
             ),
             (
                 breakdown.trend_relevance,
-                "Aligns with current FASHNOVA trend signals."
+                "Aligns with current FASHNOVA trend signals.",
             ),
             (
                 breakdown.preference_match,
-                "Matches your saved style preferences."
+                "Matches your saved style preferences.",
             ),
         ]
 
@@ -146,6 +225,9 @@ class RecommendationRanker:
                 RecommendationRanker._normalize(trend)
             )
 
+            if not normalized_trend:
+                continue
+
             if any(
                 normalized_trend in value
                 or value in normalized_trend
@@ -187,7 +269,7 @@ class RecommendationRanker:
         return "low"
 
     # ------------------------------------------------------------------
-    # Helpers
+    # Candidate helpers
     # ------------------------------------------------------------------
 
     @staticmethod

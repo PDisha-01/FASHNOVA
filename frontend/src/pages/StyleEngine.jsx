@@ -3,72 +3,82 @@ import { useState } from "react";
 import "./StyleEngine.css";
 
 function StyleEngine() {
-      const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-    const handleGetRecommendations = async () => {
+
+  // --------------------------------------------------------------
+  // Recommendation context
+  // --------------------------------------------------------------
+
+  const [occasion, setOccasion] = useState("everyday");
+  const [season, setSeason] = useState(null);
+  const [aesthetic, setAesthetic] = useState(null);
+  const [topK, setTopK] = useState(5);
+
+  // --------------------------------------------------------------
+  // Generate recommendations
+  // --------------------------------------------------------------
+
+  const handleGetRecommendations = async () => {
     setLoading(true);
     setError("");
+    setRecommendations([]);
 
     try {
-      const response = await fetch("http://localhost:5000/api/style-engine/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userContext: {},
-          visionContext: {},
-          trendContext: {},
-          requestContext: {
-            occasion: "everyday",
-            season: "current",
-            style: "preferences",
+      const response = await fetch(
+        "http://localhost:5000/api/style-engine/recommend",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-         candidates: [
-  {
-    candidate_id: "test-001",
-    name: "Classic Casual Shirt",
-    category: "top",
-    sub_category: "shirts",
-    article_type: "casual shirt",
-    color: "blue",
-    colors: ["blue"],
-    pattern: "solid",
-    fabric: "cotton",
-    aesthetic: "casual",
-    season: "all-season",
-    gender: "unisex",
-    usage: "everyday",
-    metadata: {},
-  },
-],
-          top_k: 5,
-        }),
-      });
+          body: JSON.stringify({
+            userContext: {},
+            visionContext: {},
+            trendContext: {},
+            requestContext: {
+              occasion,
+              season,
+              aesthetic,
+            },
+            candidates: [],
+            top_k: topK,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data?.message || "Failed to generate recommendations.");
+        throw new Error(
+          data?.message || "Failed to generate recommendations."
+        );
       }
 
       setRecommendations(data.recommendations || []);
     } catch (err) {
-      setError(err.message || "Something went wrong.");
+      setError(
+        err.message || "Something went wrong while generating recommendations."
+      );
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <main className="style-engine-page">
+      {/* ============================================================
+          NAVIGATION
+      ============================================================ */}
+
       <nav className="style-engine-navbar">
         <Link to="/" className="style-engine-brand">
           FASHNOVA
         </Link>
 
         <div className="style-engine-nav-links">
-            <Link to="/">HOME</Link>
+          <Link to="/">HOME</Link>
           <Link to="/vision">VISION</Link>
           <Link to="/trends">TRENDS</Link>
           <Link to="/studio">STUDIO</Link>
@@ -76,6 +86,10 @@ function StyleEngine() {
           <Link to="/profile">PROFILE</Link>
         </div>
       </nav>
+
+      {/* ============================================================
+          HERO
+      ============================================================ */}
 
       <section className="style-engine-hero">
         <div className="style-engine-hero-content">
@@ -96,12 +110,12 @@ function StyleEngine() {
           </p>
 
           <button
-  className="style-engine-primary-button"
-  onClick={handleGetRecommendations}
-  disabled={loading}
->
-  {loading ? "Generating..." : "Get Recommendations"}
-</button>
+            className="style-engine-primary-button"
+            onClick={handleGetRecommendations}
+            disabled={loading}
+          >
+            {loading ? "Generating..." : "Get Recommendations"}
+          </button>
         </div>
 
         <div className="style-engine-intelligence-card">
@@ -135,96 +149,207 @@ function StyleEngine() {
         </div>
       </section>
 
+      {/* ============================================================
+          CONTEXT
+      ============================================================ */}
+
       <section className="style-engine-context-section">
         <div className="style-engine-section-heading">
           <span>01 — CONTEXT</span>
+
           <h2>Tell FASHNOVA what you're looking for.</h2>
+
           <p>
             Your request becomes part of the recommendation context.
           </p>
         </div>
 
         <div className="style-engine-context-grid">
+          {/* OCCASION */}
+
           <div className="style-engine-context-card">
             <span>OCCASION</span>
-            <button>Everyday</button>
+
+            <select
+              value={occasion}
+              onChange={(event) => setOccasion(event.target.value)}
+            >
+              <option value="everyday">Everyday</option>
+              <option value="work">Work</option>
+              <option value="formal">Formal</option>
+              <option value="party">Party</option>
+              <option value="casual">Casual</option>
+            </select>
           </div>
+
+          {/* SEASON */}
 
           <div className="style-engine-context-card">
             <span>SEASON</span>
-            <button>Current Season</button>
+
+            <select
+              value={season ?? ""}
+              onChange={(event) =>
+                setSeason(event.target.value || null)
+              }
+            >
+              <option value="">All Seasons</option>
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+              <option value="Autumn">Autumn</option>
+              <option value="Winter">Winter</option>
+            </select>
           </div>
+
+          {/* STYLE */}
 
           <div className="style-engine-context-card">
             <span>STYLE</span>
-            <button>My Preferences</button>
+
+            <select
+              value={aesthetic ?? ""}
+              onChange={(event) =>
+                setAesthetic(event.target.value || null)
+              }
+            >
+              <option value="">Any Style</option>
+              <option value="Casual">Casual</option>
+              <option value="Formal">Formal</option>
+              <option value="Streetwear">Streetwear</option>
+              <option value="Minimal">Minimal</option>
+              <option value="Party">Party</option>
+            </select>
           </div>
+
+          {/* LIMIT */}
 
           <div className="style-engine-context-card">
             <span>LIMIT</span>
-            <button>Top 5</button>
+
+            <select
+              value={topK}
+              onChange={(event) =>
+                setTopK(Number(event.target.value))
+              }
+            >
+              <option value={3}>Top 3</option>
+              <option value={5}>Top 5</option>
+              <option value={10}>Top 10</option>
+            </select>
           </div>
         </div>
       </section>
 
+      {/* ============================================================
+          RECOMMENDATIONS
+      ============================================================ */}
+
       <section className="style-engine-recommendation-section">
         <div className="style-engine-section-heading">
           <span>02 — RECOMMENDATIONS</span>
+
           <h2>Curated for you.</h2>
+
           <p>
             Recommendations generated by the FASHNOVA Style Engine.
           </p>
         </div>
 
-       {error && (
-  <div className="style-engine-empty-state">
-    <span>STYLE ENGINE</span>
-    <h3>Unable to generate recommendations.</h3>
-    <p>{error}</p>
-  </div>
-)}
+        {/* ERROR */}
 
-{!error && recommendations.length === 0 && (
-  <div className="style-engine-empty-state">
-    <span>STYLE ENGINE</span>
+        {error && (
+          <div className="style-engine-empty-state">
+            <span>STYLE ENGINE</span>
 
-    <h3>Your recommendations will appear here.</h3>
+            <h3>Unable to generate recommendations.</h3>
 
-    <p>
-      FASHNOVA will combine your profile, fashion vision,
-      trend intelligence, and request context to rank the
-      most relevant styles.
-    </p>
-  </div>
-)}
+            <p>{error}</p>
+          </div>
+        )}
 
-{recommendations.length > 0 && (
-  <div className="style-engine-results">
-    {recommendations.map((recommendation) => (
-      <article
-        key={recommendation.candidateId}
-        className="style-engine-result-card"
-      >
-        <span>#{recommendation.rank}</span>
+        {/* INITIAL STATE */}
 
-        <h3>{recommendation.candidateName}</h3>
+        {!error &&
+          recommendations.length === 0 &&
+          !loading && (
+            <div className="style-engine-empty-state">
+              <span>STYLE ENGINE</span>
 
-        <strong>
-          Score: {Number(recommendation.score).toFixed(1)}
-        </strong>
+              <h3>Your recommendations will appear here.</h3>
 
-        <p>
-          {recommendation.reasons?.join(" ") ||
-            "Recommended based on your current style context."}
-        </p>
+              <p>
+                FASHNOVA will combine your profile, fashion vision,
+                trend intelligence, and request context to rank the
+                most relevant styles.
+              </p>
+            </div>
+          )}
 
-        <small>
-          Confidence: {recommendation.confidence}
-        </small>
-      </article>
-    ))}
-  </div>
-)}
+        {/* LOADING */}
+
+        {loading && (
+          <div className="style-engine-empty-state">
+            <span>STYLE ENGINE</span>
+
+            <h3>Analyzing your style...</h3>
+
+            <p>
+              FASHNOVA is evaluating available fashion candidates.
+            </p>
+          </div>
+        )}
+
+        {/* RESULTS */}
+
+        {recommendations.length > 0 && (
+          <div className="style-engine-results">
+            {recommendations.map((recommendation, index) => (
+              <article
+                key={
+                  recommendation.candidate_id ??
+                  recommendation.candidateId ??
+                  index
+                }
+                className="style-engine-result-card"
+              >
+                <span>
+                  #
+                  {recommendation.rank ??
+                    recommendation.rank_index ??
+                    index + 1}
+                </span>
+
+                <h3>
+                  {recommendation.name ??
+                    recommendation.candidateName ??
+                    recommendation.candidate_name ??
+                    "Fashion Item"}
+                </h3>
+
+                <strong>
+                  Score:{" "}
+                  {Number(recommendation.score ?? 0).toFixed(1)}
+                </strong>
+
+                {recommendation.reasons?.length > 0 && (
+                  <p>
+                    {recommendation.reasons.join(" ")}
+                  </p>
+                )}
+
+                {recommendation.reasons?.length === 0 &&
+                  recommendation.reason && (
+                    <p>{recommendation.reason}</p>
+                  )}
+
+                <small>
+                  Confidence:{" "}
+                  {recommendation.confidence ?? "N/A"}
+                </small>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );
