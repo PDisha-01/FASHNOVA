@@ -18,3 +18,22 @@ export async function getProfile() {
 
   return response.data;
 }
+
+export async function updateProfilePreferences(preferences) {
+  const token = getToken();
+
+  if (!token) {
+    const error = new Error("Authentication is required.");
+    error.code = "AUTH_TOKEN_MISSING";
+    error.status = 401;
+    throw error;
+  }
+
+  const response = await apiRequest("/profile/preferences", {
+    method: "PATCH",
+    token,
+    body: preferences,
+  });
+
+  return response.data;
+}

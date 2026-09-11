@@ -32,6 +32,10 @@ function Navbar() {
         <NavLink to="/studio">
           Studio
         </NavLink>
+
+        <NavLink to="/studio">
+          Style Engine
+        </NavLink>
       </nav>
 
       <NavLink

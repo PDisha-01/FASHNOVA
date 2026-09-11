@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getProfile } from "../services/profile";
+import {
+  getProfile,
+  updateProfilePreferences,
+} from "../services/profile";
 import { useAuth } from "../context/useAuth";
 
 function Profile() {
@@ -18,6 +21,18 @@ function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingPreferences, setEditingPreferences] = useState(false);
+
+const [preferenceForm, setPreferenceForm] = useState({
+  preferredStyles: [],
+  preferredColors: [],
+  preferredSeasons: [],
+  preferredCategories: [],
+  preferredFits: [],
+  favoriteBrands: [],
+  budgetMin: null,
+  budgetMax: null,
+});
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -36,7 +51,19 @@ function Profile() {
         setError("");
 
         const data = await getProfile();
-        setProfile(data);
+
+setProfile(data);
+
+setPreferenceForm({
+  preferredStyles: data.preferences?.preferredStyles || [],
+  preferredColors: data.preferences?.preferredColors || [],
+  preferredSeasons: data.preferences?.preferredSeasons || [],
+  preferredCategories: data.preferences?.preferredCategories || [],
+  preferredFits: data.preferences?.preferredFits || [],
+  favoriteBrands: data.preferences?.favoriteBrands || [],
+  budgetMin: data.preferences?.budgetMin ?? null,
+  budgetMax: data.preferences?.budgetMax ?? null,
+});
       } catch (err) {
         if (err.status === 401) {
           logout();
@@ -55,6 +82,31 @@ function Profile() {
     loadProfile();
   }, [isAuthenticated, logout, navigate]);
 
+  async function handleSavePreferences() {
+  try {
+    setError("");
+
+    const updatedPreferences =
+      await updateProfilePreferences(preferenceForm);
+
+    setProfile((current) => ({
+      ...current,
+      preferences: updatedPreferences,
+    }));
+
+    setEditingPreferences(false);
+  } catch (err) {
+    setError(
+      err.message || "Unable to update your preferences."
+    );
+  }
+}
+function handlePreferenceChange(field, value) {
+  setPreferenceForm((current) => ({
+    ...current,
+    [field]: value,
+  }));
+}
   function handleLogout() {
     logout();
     navigate("/login", { replace: true });
@@ -224,76 +276,215 @@ function Profile() {
           </article>
 
           {/* PREFERENCES */}
-          <article className="profile-card">
-            <div className="profile-card-top">
-              <span>02</span>
-              <span>PREFERENCES</span>
-            </div>
+<article className="profile-card">
+  <div className="profile-card-top">
+    <span>02</span>
+    <span>PREFERENCES</span>
+  </div>
 
-            <h2>Style Preferences</h2>
+  <h2>Style Preferences</h2>
 
-            <p>
-              Your preferences will help the FASHNOVA Style
-              Engine personalize future recommendations.
-            </p>
+  <p>
+    Your preferences will help the FASHNOVA Style Engine
+    personalize future recommendations.
+  </p>
 
-            <div className="preference-list">
-              <div>
-                <span>STYLE</span>
-                <strong>
-                  {styles > 0
-                    ? `${styles} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
+  {!editingPreferences ? (
+    <>
+      <div className="preference-list">
+        <div>
+          <span>STYLE</span>
+          <strong>
+            {styles > 0
+              ? `${styles} configured`
+              : "Not configured"}
+          </strong>
+        </div>
 
-              <div>
-                <span>COLORS</span>
-                <strong>
-                  {colors > 0
-                    ? `${colors} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
+        <div>
+          <span>COLORS</span>
+          <strong>
+            {colors > 0
+              ? `${colors} configured`
+              : "Not configured"}
+          </strong>
+        </div>
 
-              <div>
-                <span>SEASONS</span>
-                <strong>
-                  {seasons > 0
-                    ? `${seasons} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
+        <div>
+          <span>SEASONS</span>
+          <strong>
+            {seasons > 0
+              ? `${seasons} configured`
+              : "Not configured"}
+          </strong>
+        </div>
 
-              <div>
-                <span>CATEGORIES</span>
-                <strong>
-                  {categories > 0
-                    ? `${categories} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
+        <div>
+          <span>CATEGORIES</span>
+          <strong>
+            {categories > 0
+              ? `${categories} configured`
+              : "Not configured"}
+          </strong>
+        </div>
 
-              <div>
-                <span>FITS</span>
-                <strong>
-                  {fits > 0
-                    ? `${fits} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
+        <div>
+          <span>FITS</span>
+          <strong>
+            {fits > 0
+              ? `${fits} configured`
+              : "Not configured"}
+          </strong>
+        </div>
 
-              <div>
-                <span>BRANDS</span>
-                <strong>
-                  {brands > 0
-                    ? `${brands} configured`
-                    : "Not configured"}
-                </strong>
-              </div>
-            </div>
-          </article>
+        <div>
+          <span>BRANDS</span>
+          <strong>
+            {brands > 0
+              ? `${brands} configured`
+              : "Not configured"}
+          </strong>
+        </div>
+      </div>
 
+      <button
+        type="button"
+        className="profile-action-button"
+        onClick={() => setEditingPreferences(true)}
+      >
+        Edit Preferences
+      </button>
+    </>
+  ) : (
+    <div className="preference-editor">
+      <label>
+        Styles
+        <input
+          type="text"
+          value={preferenceForm.preferredStyles.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "preferredStyles",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="Casual, Minimal"
+        />
+      </label>
+
+      <label>
+        Colors
+        <input
+          type="text"
+          value={preferenceForm.preferredColors.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "preferredColors",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="Black, White, Burgundy"
+        />
+      </label>
+
+      <label>
+        Seasons
+        <input
+          type="text"
+          value={preferenceForm.preferredSeasons.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "preferredSeasons",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="SUMMER, WINTER"
+        />
+      </label>
+
+      <label>
+        Categories
+        <input
+          type="text"
+          value={preferenceForm.preferredCategories.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "preferredCategories",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="DRESSES, JACKETS"
+        />
+      </label>
+
+      <label>
+        Fits
+        <input
+          type="text"
+          value={preferenceForm.preferredFits.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "preferredFits",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="SLIM, REGULAR"
+        />
+      </label>
+
+      <label>
+        Favorite Brands
+        <input
+          type="text"
+          value={preferenceForm.favoriteBrands.join(", ")}
+          onChange={(event) =>
+            handlePreferenceChange(
+              "favoriteBrands",
+              event.target.value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          placeholder="Brand names separated by commas"
+        />
+      </label>
+
+      <div className="preference-editor-actions">
+        <button
+          type="button"
+          className="profile-action-button"
+          onClick={handleSavePreferences}
+        >
+          Save Preferences
+        </button>
+
+        <button
+          type="button"
+          className="profile-secondary-button"
+          onClick={() => setEditingPreferences(false)}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  )}
+</article>
           {/* ACTIVITY */}
           <article className="profile-card">
             <div className="profile-card-top">
