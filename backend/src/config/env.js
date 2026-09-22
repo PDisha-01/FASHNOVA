@@ -19,21 +19,22 @@ const envSchema = z.object({
     .url()
     .default("http://localhost:5173"),
 
+  // FASHNOVA ML services
   VISION_ML_URL: z
     .url()
-    .default("http://127.0.0.1:8000"),
+    .default("http://127.0.0.1:8001"),
 
-    TRENDS_ML_URL: z
-  .url()
-  .default("http://127.0.0.1:8001"),
+  TRENDS_ML_URL: z
+    .url()
+    .default("http://127.0.0.1:8002"),
 
   STUDIO_ML_URL: z
-  .url()
-  .default("http://127.0.0.1:8002"),
+    .url()
+    .default("http://127.0.0.1:8003"),
 
   STYLE_ENGINE_ML_URL: z
-  .url()
-  .default("http://127.0.0.1:8003"),
+    .url()
+    .default("http://127.0.0.1:8004"),
 
   DATABASE_URL: z
     .string()
@@ -56,3 +57,9 @@ export const env = parsedEnv.data;
 
 console.log("FASHNOVA FRONTEND_URL:", env.FRONTEND_URL);
 console.log("FASHNOVA VISION_ML_URL:", env.VISION_ML_URL);
+console.log("FASHNOVA TRENDS_ML_URL:", env.TRENDS_ML_URL);
+console.log("FASHNOVA STUDIO_ML_URL:", env.STUDIO_ML_URL);
+console.log(
+  "FASHNOVA STYLE_ENGINE_ML_URL:",
+  env.STYLE_ENGINE_ML_URL
+);

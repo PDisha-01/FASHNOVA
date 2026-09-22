@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
+import "./Profile.css";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
 import {
   getProfile,
   updateProfilePreferences,
 } from "../services/profile";
+
 import { useAuth } from "../context/useAuth";
 
 function Profile() {
@@ -22,17 +26,18 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingPreferences, setEditingPreferences] = useState(false);
+  const [savingPreferences, setSavingPreferences] = useState(false);
 
-const [preferenceForm, setPreferenceForm] = useState({
-  preferredStyles: [],
-  preferredColors: [],
-  preferredSeasons: [],
-  preferredCategories: [],
-  preferredFits: [],
-  favoriteBrands: [],
-  budgetMin: null,
-  budgetMax: null,
-});
+  const [preferenceForm, setPreferenceForm] = useState({
+    preferredStyles: [],
+    preferredColors: [],
+    preferredSeasons: [],
+    preferredCategories: [],
+    preferredFits: [],
+    favoriteBrands: [],
+    budgetMin: null,
+    budgetMax: null,
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -52,18 +57,19 @@ const [preferenceForm, setPreferenceForm] = useState({
 
         const data = await getProfile();
 
-setProfile(data);
+        setProfile(data);
 
-setPreferenceForm({
-  preferredStyles: data.preferences?.preferredStyles || [],
-  preferredColors: data.preferences?.preferredColors || [],
-  preferredSeasons: data.preferences?.preferredSeasons || [],
-  preferredCategories: data.preferences?.preferredCategories || [],
-  preferredFits: data.preferences?.preferredFits || [],
-  favoriteBrands: data.preferences?.favoriteBrands || [],
-  budgetMin: data.preferences?.budgetMin ?? null,
-  budgetMax: data.preferences?.budgetMax ?? null,
-});
+        setPreferenceForm({
+          preferredStyles: data.preferences?.preferredStyles || [],
+          preferredColors: data.preferences?.preferredColors || [],
+          preferredSeasons: data.preferences?.preferredSeasons || [],
+          preferredCategories:
+            data.preferences?.preferredCategories || [],
+          preferredFits: data.preferences?.preferredFits || [],
+          favoriteBrands: data.preferences?.favoriteBrands || [],
+          budgetMin: data.preferences?.budgetMin ?? null,
+          budgetMax: data.preferences?.budgetMax ?? null,
+        });
       } catch (err) {
         if (err.status === 401) {
           logout();
@@ -83,30 +89,45 @@ setPreferenceForm({
   }, [isAuthenticated, logout, navigate]);
 
   async function handleSavePreferences() {
-  try {
-    setError("");
+    try {
+      setSavingPreferences(true);
+      setError("");
 
-    const updatedPreferences =
-      await updateProfilePreferences(preferenceForm);
+      const updatedPreferences =
+        await updateProfilePreferences(preferenceForm);
 
-    setProfile((current) => ({
+      setProfile((current) => ({
+        ...current,
+        preferences: updatedPreferences,
+      }));
+
+      setEditingPreferences(false);
+    } catch (err) {
+      setError(
+        err.message || "Unable to update your preferences."
+      );
+    } finally {
+      setSavingPreferences(false);
+    }
+  }
+
+  function handlePreferenceChange(field, value) {
+    setPreferenceForm((current) => ({
       ...current,
-      preferences: updatedPreferences,
+      [field]: value,
     }));
+  }
 
-    setEditingPreferences(false);
-  } catch (err) {
-    setError(
-      err.message || "Unable to update your preferences."
+  function handleArrayChange(field, value) {
+    handlePreferenceChange(
+      field,
+      value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
     );
   }
-}
-function handlePreferenceChange(field, value) {
-  setPreferenceForm((current) => ({
-    ...current,
-    [field]: value,
-  }));
-}
+
   function handleLogout() {
     logout();
     navigate("/login", { replace: true });
@@ -122,19 +143,13 @@ function handlePreferenceChange(field, value) {
         <Navbar />
 
         <main className="profile-page">
-          <section className="profile-hero">
-            <p className="section-label">YOUR FASHNOVA</p>
-
-            <h1>
-              Loading
-              <br />
-              <span>your profile...</span>
-            </h1>
-
-            <p>
-              FASHNOVA is retrieving your personal fashion
-              intelligence profile.
-            </p>
+          <section className="profile-loading">
+            <div className="profile-loading-mark">F</div>
+            <p>FASHNOVA</p>
+            <h1>Loading your style profile...</h1>
+            <span>
+              Retrieving your personal fashion intelligence.
+            </span>
           </section>
         </main>
 
@@ -143,26 +158,28 @@ function handlePreferenceChange(field, value) {
     );
   }
 
-  if (error) {
+  if (error && !profile) {
     return (
       <div className="app">
         <Navbar />
 
         <main className="profile-page">
-          <section className="profile-hero">
-            <p className="section-label">PROFILE ERROR</p>
+          <section className="profile-error">
+            <span className="profile-eyebrow">
+              PROFILE ERROR
+            </span>
 
             <h1>
-              Something
+              Something went
               <br />
-              <span>went wrong.</span>
+              <em>wrong.</em>
             </h1>
 
             <p>{error}</p>
 
             <button
               type="button"
-              className="profile-action-button"
+              className="profile-primary-button"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -187,340 +204,619 @@ function handlePreferenceChange(field, value) {
     authUser?.email ||
     "Not available";
 
-  const status =
-    profile?.status || "ACTIVE";
+  const status = profile?.status || "ACTIVE";
 
-  const styles =
-    profile?.preferences?.preferredStyles?.length || 0;
+  const preferences = profile?.preferences || {};
 
-  const colors =
-    profile?.preferences?.preferredColors?.length || 0;
+  const styles = preferences.preferredStyles || [];
+  const colors = preferences.preferredColors || [];
+  const seasons = preferences.preferredSeasons || [];
+  const categories = preferences.preferredCategories || [];
+  const fits = preferences.preferredFits || [];
+  const brands = preferences.favoriteBrands || [];
 
-  const seasons =
-    profile?.preferences?.preferredSeasons?.length || 0;
+  const budgetMin = preferences.budgetMin;
+  const budgetMax = preferences.budgetMax;
 
-  const categories =
-    profile?.preferences?.preferredCategories?.length || 0;
-
-  const fits =
-    profile?.preferences?.preferredFits?.length || 0;
-
-  const brands =
-    profile?.preferences?.favoriteBrands?.length || 0;
+  const initials =
+    `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`
+      .trim()
+      .toUpperCase() || "F";
 
   return (
     <div className="app">
       <Navbar />
 
       <main className="profile-page">
-        <section className="profile-hero">
-          <p className="section-label">YOUR FASHNOVA</p>
+        {/* HERO */}
+        <section className="profile-hero-new">
+          <div className="profile-hero-copy">
+            <span className="profile-eyebrow">
+              YOUR FASHNOVA
+            </span>
 
-          <h1>
-            Your
-            <br />
-            <span>Style Profile.</span>
-          </h1>
+            <h1>
+              Your
+              <br />
+              <em>Style Profile.</em>
+            </h1>
 
-          <p>
-            Your personal space for fashion preferences,
-            activity, discoveries, and personalized intelligence
-            from the FASHNOVA Style Engine.
-          </p>
+            <p>
+              Your personal fashion identity, preferences and
+              intelligence — all in one place.
+            </p>
+          </div>
+
+          <div className="profile-hero-decoration">
+            <span>Better style.</span>
+            <span>Smarter choices.</span>
+          </div>
         </section>
 
-        <section className="profile-grid">
-          {/* PROFILE */}
-          <article className="profile-card profile-main-card">
-            <div className="profile-card-top">
-              <span>01</span>
-              <span>PROFILE</span>
-            </div>
-
-            <div className="profile-avatar">
-              {firstName
-                ? firstName.charAt(0).toUpperCase()
-                : "F"}
-            </div>
-
-            <h2>{fullName}</h2>
-
-            <p className="profile-placeholder">
-              Your FASHNOVA account information.
-            </p>
-
-            <div className="profile-details">
+        {/* ACCOUNT + STYLE IDENTITY */}
+        <section className="profile-top-grid">
+          {/* ACCOUNT */}
+          <article className="profile-modern-card account-card">
+            <div className="profile-card-heading">
               <div>
-                <span>NAME</span>
-                <strong>{fullName}</strong>
+                <span className="profile-card-number">
+                  01
+                </span>
+
+                <h2>Account Information</h2>
               </div>
 
+              <span className="profile-card-icon">◉</span>
+            </div>
+
+            <div className="account-content">
+              <div className="profile-avatar-large">
+                {initials}
+              </div>
+
+              <div className="account-primary">
+                <h3>{fullName}</h3>
+                <p>{email}</p>
+
+                <span className="account-status">
+                  <i />
+                  {status}
+                </span>
+              </div>
+            </div>
+
+            <div className="account-details">
               <div>
                 <span>EMAIL</span>
                 <strong>{email}</strong>
               </div>
 
               <div>
-                <span>STATUS</span>
-                <strong>{status}</strong>
+                <span>ACCOUNT</span>
+                <strong>FASHNOVA Member</strong>
               </div>
             </div>
 
             <button
               type="button"
-              className="profile-action-button"
+              className="profile-logout-button"
               onClick={handleLogout}
             >
               Log Out
             </button>
           </article>
 
-          {/* PREFERENCES */}
-<article className="profile-card">
-  <div className="profile-card-top">
-    <span>02</span>
-    <span>PREFERENCES</span>
-  </div>
+          {/* STYLE IDENTITY */}
+          <article className="profile-modern-card">
+            <div className="profile-card-heading">
+              <div>
+                <span className="profile-card-number">
+                  02
+                </span>
 
-  <h2>Style Preferences</h2>
+                <h2>Your Style Identity</h2>
+              </div>
 
-  <p>
-    Your preferences will help the FASHNOVA Style Engine
-    personalize future recommendations.
-  </p>
-
-  {!editingPreferences ? (
-    <>
-      <div className="preference-list">
-        <div>
-          <span>STYLE</span>
-          <strong>
-            {styles > 0
-              ? `${styles} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-
-        <div>
-          <span>COLORS</span>
-          <strong>
-            {colors > 0
-              ? `${colors} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-
-        <div>
-          <span>SEASONS</span>
-          <strong>
-            {seasons > 0
-              ? `${seasons} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-
-        <div>
-          <span>CATEGORIES</span>
-          <strong>
-            {categories > 0
-              ? `${categories} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-
-        <div>
-          <span>FITS</span>
-          <strong>
-            {fits > 0
-              ? `${fits} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-
-        <div>
-          <span>BRANDS</span>
-          <strong>
-            {brands > 0
-              ? `${brands} configured`
-              : "Not configured"}
-          </strong>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="profile-action-button"
-        onClick={() => setEditingPreferences(true)}
-      >
-        Edit Preferences
-      </button>
-    </>
-  ) : (
-    <div className="preference-editor">
-      <label>
-        Styles
-        <input
-          type="text"
-          value={preferenceForm.preferredStyles.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "preferredStyles",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="Casual, Minimal"
-        />
-      </label>
-
-      <label>
-        Colors
-        <input
-          type="text"
-          value={preferenceForm.preferredColors.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "preferredColors",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="Black, White, Burgundy"
-        />
-      </label>
-
-      <label>
-        Seasons
-        <input
-          type="text"
-          value={preferenceForm.preferredSeasons.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "preferredSeasons",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="SUMMER, WINTER"
-        />
-      </label>
-
-      <label>
-        Categories
-        <input
-          type="text"
-          value={preferenceForm.preferredCategories.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "preferredCategories",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="DRESSES, JACKETS"
-        />
-      </label>
-
-      <label>
-        Fits
-        <input
-          type="text"
-          value={preferenceForm.preferredFits.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "preferredFits",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="SLIM, REGULAR"
-        />
-      </label>
-
-      <label>
-        Favorite Brands
-        <input
-          type="text"
-          value={preferenceForm.favoriteBrands.join(", ")}
-          onChange={(event) =>
-            handlePreferenceChange(
-              "favoriteBrands",
-              event.target.value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean)
-            )
-          }
-          placeholder="Brand names separated by commas"
-        />
-      </label>
-
-      <div className="preference-editor-actions">
-        <button
-          type="button"
-          className="profile-action-button"
-          onClick={handleSavePreferences}
-        >
-          Save Preferences
-        </button>
-
-        <button
-          type="button"
-          className="profile-secondary-button"
-          onClick={() => setEditingPreferences(false)}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  )}
-</article>
-          {/* ACTIVITY */}
-          <article className="profile-card">
-            <div className="profile-card-top">
-              <span>03</span>
-              <span>ACTIVITY</span>
+              <button
+                type="button"
+                className="profile-small-button"
+                onClick={() => setEditingPreferences(true)}
+              >
+                Edit
+              </button>
             </div>
 
-            <h2>Your Activity</h2>
-
-            <p>
-              Your Vision analyses, Studio creations, and future
-              recommendations will appear here.
+            <p className="profile-card-description">
+              Your preferences form the foundation of your
+              personalized FASHNOVA experience.
             </p>
 
-            <div className="activity-list">
-              <div>
-                <span>VISION</span>
-                <strong>0 analyses</strong>
-              </div>
+            <div className="style-identity-grid">
+              <PreferenceStat
+                label="Preferred Styles"
+                value={styles.length}
+                suffix="styles"
+              />
+
+              <PreferenceStat
+                label="Preferred Colors"
+                value={colors.length}
+                suffix="colors"
+              />
+
+              <PreferenceStat
+                label="Seasons"
+                value={seasons.length}
+                suffix="seasons"
+              />
+
+              <PreferenceStat
+                label="Categories"
+                value={categories.length}
+                suffix="categories"
+              />
+
+              <PreferenceStat
+                label="Fits"
+                value={fits.length}
+                suffix="fits"
+              />
+
+              <PreferenceStat
+                label="Favorite Brands"
+                value={brands.length}
+                suffix="brands"
+              />
+            </div>
+
+            <div className="budget-summary">
+              <div className="budget-symbol">₹</div>
 
               <div>
-                <span>STUDIO</span>
-                <strong>0 creations</strong>
-              </div>
+                <span>BUDGET RANGE</span>
 
-              <div>
-                <span>STYLE ENGINE</span>
-                <strong>Coming soon</strong>
+                <strong>
+                  {budgetMin != null || budgetMax != null
+                    ? `₹${Number(budgetMin || 0).toLocaleString(
+                        "en-IN"
+                      )} – ₹${Number(
+                        budgetMax || 0
+                      ).toLocaleString("en-IN")}`
+                    : "Not configured"}
+                </strong>
               </div>
             </div>
           </article>
+        </section>
+
+        {/* FASHION INTELLIGENCE */}
+        <section className="profile-modern-card intelligence-card">
+          <div className="section-heading-row">
+            <div>
+              <span className="profile-card-number">
+                03
+              </span>
+
+              <h2>Fashion Intelligence</h2>
+
+              <p>
+                Your style journey, powered by FASHNOVA AI.
+              </p>
+            </div>
+
+            <span className="intelligence-flow">
+              Understand → Create → Personalize
+            </span>
+          </div>
+
+          <div className="intelligence-grid">
+            <IntelligenceCard
+              type="VISION"
+              subtitle="Computer Vision"
+              count="0 analyses"
+              description="Analyze outfits and understand your visual fashion style."
+              action="Start Analyzing"
+              to="/vision"
+            />
+
+            <IntelligenceCard
+              type="STUDIO"
+              subtitle="Gen AI"
+              count="0 creations"
+              description="Create personalized looks, concepts and fashion ideas."
+              action="Create Your Look"
+              to="/studio"
+            />
+
+            <IntelligenceCard
+              type="STYLE ENGINE"
+              subtitle="Recommendation"
+              count="Coming soon"
+              description="Turn your fashion identity into personalized recommendations."
+              action="Explore Style Engine"
+              to="/style-engine"
+              muted
+            />
+          </div>
+        </section>
+
+        {/* PREFERENCES */}
+        <section className="profile-modern-card preferences-card">
+          <div className="section-heading-row">
+            <div>
+              <span className="profile-card-number">
+                04
+              </span>
+
+              <h2>Style Preferences</h2>
+
+              <p>
+                Your preferences help FASHNOVA personalize
+                your fashion experience.
+              </p>
+            </div>
+
+            {!editingPreferences && (
+              <button
+                type="button"
+                className="profile-small-button"
+                onClick={() =>
+                  setEditingPreferences(true)
+                }
+              >
+                Edit Preferences
+              </button>
+            )}
+          </div>
+
+          {!editingPreferences ? (
+            <PreferenceOverview
+              styles={styles}
+              colors={colors}
+              seasons={seasons}
+              categories={categories}
+              fits={fits}
+              brands={brands}
+              budgetMin={budgetMin}
+              budgetMax={budgetMax}
+            />
+          ) : (
+            <div className="preference-editor-modern">
+              <PreferenceInput
+                label="Preferred Styles"
+                value={preferenceForm.preferredStyles}
+                placeholder="Casual, Minimal, Streetwear"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "preferredStyles",
+                    value
+                  )
+                }
+              />
+
+              <PreferenceInput
+                label="Preferred Colors"
+                value={preferenceForm.preferredColors}
+                placeholder="Black, Burgundy, Rose"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "preferredColors",
+                    value
+                  )
+                }
+              />
+
+              <PreferenceInput
+                label="Preferred Seasons"
+                value={preferenceForm.preferredSeasons}
+                placeholder="Spring, Summer, Winter"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "preferredSeasons",
+                    value
+                  )
+                }
+              />
+
+              <PreferenceInput
+                label="Preferred Categories"
+                value={preferenceForm.preferredCategories}
+                placeholder="Dresses, Tops, Jackets"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "preferredCategories",
+                    value
+                  )
+                }
+              />
+
+              <PreferenceInput
+                label="Preferred Fits"
+                value={preferenceForm.preferredFits}
+                placeholder="Slim, Regular, Relaxed"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "preferredFits",
+                    value
+                  )
+                }
+              />
+
+              <PreferenceInput
+                label="Favorite Brands"
+                value={preferenceForm.favoriteBrands}
+                placeholder="Brand names separated by commas"
+                onChange={(value) =>
+                  handleArrayChange(
+                    "favoriteBrands",
+                    value
+                  )
+                }
+              />
+
+              <div className="budget-editor">
+                <div className="budget-editor-heading">
+                  <div>
+                    <span>BUDGET</span>
+                    <h3>Your shopping range</h3>
+                  </div>
+
+                  <div className="budget-editor-value">
+                    ₹
+                  </div>
+                </div>
+
+                <div className="budget-input-grid">
+                  <label>
+                    Minimum budget
+                    <div className="currency-input">
+                      <span>₹</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={
+                          preferenceForm.budgetMin ?? ""
+                        }
+                        onChange={(event) =>
+                          handlePreferenceChange(
+                            "budgetMin",
+                            event.target.value === ""
+                              ? null
+                              : Number(
+                                  event.target.value
+                                )
+                          )
+                        }
+                        placeholder="1000"
+                      />
+                    </div>
+                  </label>
+
+                  <label>
+                    Maximum budget
+                    <div className="currency-input">
+                      <span>₹</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={
+                          preferenceForm.budgetMax ?? ""
+                        }
+                        onChange={(event) =>
+                          handlePreferenceChange(
+                            "budgetMax",
+                            event.target.value === ""
+                              ? null
+                              : Number(
+                                  event.target.value
+                                )
+                          )
+                        }
+                        placeholder="5000"
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {error && (
+                <div className="profile-inline-error">
+                  {error}
+                </div>
+              )}
+
+              <div className="preference-actions">
+                <button
+                  type="button"
+                  className="profile-primary-button"
+                  onClick={handleSavePreferences}
+                  disabled={savingPreferences}
+                >
+                  {savingPreferences
+                    ? "Saving..."
+                    : "Save Preferences"}
+                </button>
+
+                <button
+                  type="button"
+                  className="profile-secondary-button"
+                  onClick={() =>
+                    setEditingPreferences(false)
+                  }
+                  disabled={savingPreferences}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* FOOTER MESSAGE */}
+        <section className="profile-closing">
+          <div>
+            <span>YOUR STYLE JOURNEY</span>
+            <h2>
+              Keep exploring.
+              <br />
+              <em>Your next look is waiting.</em>
+            </h2>
+          </div>
+
+          <span className="closing-wordmark">
+            FASHNOVA →
+          </span>
         </section>
       </main>
 
       <Footer />
     </div>
+  );
+}
+
+function PreferenceStat({ label, value, suffix }) {
+  return (
+    <div className="style-stat">
+      <div className="style-stat-icon">✦</div>
+
+      <span>{label}</span>
+
+      <strong>{value}</strong>
+
+      <small>{suffix}</small>
+    </div>
+  );
+}
+
+function PreferenceInput({
+  label,
+  value,
+  placeholder,
+  onChange,
+}) {
+  return (
+    <label className="preference-input">
+      <span>{label}</span>
+
+      <input
+        type="text"
+        value={value.join(", ")}
+        onChange={(event) =>
+          onChange(event.target.value)
+        }
+        placeholder={placeholder}
+      />
+    </label>
+  );
+}
+
+function PreferenceOverview({
+  styles,
+  colors,
+  seasons,
+  categories,
+  fits,
+  brands,
+  budgetMin,
+  budgetMax,
+}) {
+  const groups = [
+    ["Preferred Styles", styles],
+    ["Preferred Colors", colors],
+    ["Seasons", seasons],
+    ["Categories", categories],
+    ["Fits", fits],
+    ["Favorite Brands", brands],
+  ];
+
+  return (
+    <div className="preference-overview">
+      {groups.map(([label, items]) => (
+        <div
+          className="preference-overview-item"
+          key={label}
+        >
+          <span>{label}</span>
+
+          <div className="preference-tags">
+            {items.length > 0 ? (
+              <>
+                {items.slice(0, 4).map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+
+                {items.length > 4 && (
+                  <span>+{items.length - 4} more</span>
+                )}
+              </>
+            ) : (
+              <span className="empty-tag">
+                Not configured
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <div className="preference-overview-item budget-overview">
+        <span>Budget Range</span>
+
+        <strong>
+          {budgetMin != null || budgetMax != null
+            ? `₹${Number(
+                budgetMin || 0
+              ).toLocaleString("en-IN")} – ₹${Number(
+                budgetMax || 0
+              ).toLocaleString("en-IN")}`
+            : "Not configured"}
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+function IntelligenceCard({
+  type,
+  subtitle,
+  count,
+  description,
+  action,
+  to,
+  muted = false,
+}) {
+  return (
+    <article
+      className={`intelligence-item ${
+        muted ? "is-muted" : ""
+      }`}
+    >
+      <div className="intelligence-number">
+        {type === "VISION"
+          ? "01"
+          : type === "STUDIO"
+          ? "02"
+          : "03"}
+      </div>
+
+      <div className="intelligence-content">
+        <span className="intelligence-type">
+          {type}
+        </span>
+
+        <span className="intelligence-subtitle">
+          {subtitle}
+        </span>
+
+        <strong>{count}</strong>
+
+        <p>{description}</p>
+
+        <Link to={to} className="intelligence-link">
+          {action}
+          <span>→</span>
+        </Link>
+      </div>
+    </article>
   );
 }
 
