@@ -2,9 +2,9 @@
 
 ### AI-Powered Fashion Intelligence Platform
 
-FASHNOVA is a fashion intelligence platform that combines **Computer Vision, Machine Learning, Generative AI, and personalized recommendation systems** to understand fashion, analyze trends, generate creative designs, and provide intelligent style recommendations.
+FASHNOVA is an AI-powered fashion intelligence platform that combines **Computer Vision, Machine Learning, Generative AI, and personalized recommendation systems** to understand fashion, analyze trends, generate creative designs, and provide intelligent style recommendations.
 
-The project is being developed as a production-oriented AI/ML system with a modular architecture designed for scalability, maintainability, validation, and future deployment.
+The project is being developed as a modular, production-oriented AI/ML system with clear service boundaries, structured APIs, database integration, validation, error handling, testing, and future deployment readiness.
 
 ---
 
@@ -17,8 +17,11 @@ FASHNOVA aims to build an intelligent fashion ecosystem where users can:
 * Discover and analyze fashion trends
 * Forecast emerging fashion trends using Machine Learning
 * Generate fashion concepts and creative designs using Generative AI
-* Receive personalized fashion recommendations
+* Maintain personalized fashion preferences
+* Receive intelligent style recommendations
 * Combine visual understanding, trend intelligence, and creative generation through a centralized Style Engine
+
+The long-term goal is to transform fashion discovery from a simple browsing experience into an intelligent, personalized fashion intelligence system.
 
 ---
 
@@ -40,31 +43,27 @@ FASHNOVA aims to build an intelligent fashion ecosystem where users can:
                     Recommendation
                             │
                      FASHNOVA WEB APP
-```
-
-## Core Intelligence Pillars
-
-### 1. VISION — Computer Vision
+                     Core Intelligence Pillars
+1. VISION — Computer Vision
 
 The Vision module analyzes fashion images and extracts structured fashion attributes.
 
 Current model integration is based on:
 
-**AutoCatalogAI CLIP Multitask Classifier V2**
+AutoCatalogAI CLIP Multitask Classifier V2
 
 The current prediction pipeline includes:
 
-* Gender
-* Master Category
-* Sub Category
-* Article Type
-* Base Colour
-* Season
-* Usage
+Gender
+Master Category
+Sub Category
+Article Type
+Base Colour
+Season
+Usage
 
 The Vision pipeline connects:
 
-```text
 Fashion Image
       ↓
 React Frontend
@@ -78,15 +77,13 @@ CLIP Multitask Model
 Fashion Attributes
       ↓
 Frontend Result
-```
 
----
+The Vision service is implemented as an independent FastAPI service so that model inference remains separated from the main Node.js application.
 
-### 2. TRENDS — Machine Learning
+2. TRENDS — Machine Learning
 
-The Trends module provides fashion trend intelligence using a real fashion catalog dataset and a structured ML pipeline.
+The Trends module provides fashion trend intelligence using a fashion catalog dataset and a structured machine-learning pipeline.
 
-```text
 Fashion Data
      ↓
 Data Cleaning
@@ -104,27 +101,26 @@ ML Forecasting
 Trend Intelligence
      ↓
 Style Engine
-```
 
-Current capabilities include:
+Current Trends capabilities include:
 
-* Historical trend analysis
-* Emerging trend detection
-* Trend lifecycle classification
-* Trend scoring
-* Color trend intelligence
-* Category momentum
-* Sub-category analysis
-* Trend forecasting
-* Forecast validation
-* Forecast confidence estimation
-* Trend filtering and comparison
+Historical trend analysis
+Emerging trend detection
+Trend lifecycle classification
+Trend scoring
+Color trend intelligence
+Category momentum
+Sub-category analysis
+Trend forecasting
+Forecast validation
+Forecast confidence estimation
+Trend filtering and comparison
 
 Trend signals are normalized across years rather than treating raw catalog counts as direct popularity measurements.
 
----
+The Trends ML service is implemented as an independent FastAPI service.
 
-### 3. STUDIO — Generative AI
+3. STUDIO — Generative AI
 
 Studio is FASHNOVA's creative intelligence layer.
 
@@ -132,7 +128,6 @@ It is responsible for generating fashion-related creative outputs rather than di
 
 Current Studio architecture:
 
-```text
 React Studio
      ↓
 Node.js Backend
@@ -144,41 +139,36 @@ Prompt Builder
 Gemini Image Generation API
      ↓
 Generated Fashion Design
-```
 
 Current capabilities include:
 
-* Structured fashion generation requests
-* Fashion context conditioning
-* Trend-context interface
-* Vision-context interface
-* Prompt construction
-* AI design generation
-* Image response handling
-* Generation validation
-* Error handling
+Structured fashion generation requests
+Fashion context conditioning
+Trend-context interface
+Vision-context interface
+Prompt construction
+AI design generation
+Image response handling
+Generation validation
+Error handling
 
-The current implemented generation workflow is:
+The currently implemented generation workflow is:
 
-**Design Generation**
+Design Generation
 
 The architecture is prepared for future:
 
-* Concept generation
-* Pattern generation
-* Style variations
-* Reference-based generation
-* Additional trend-aware generation workflows
+Concept generation
+Pattern generation
+Style variations
+Reference-based generation
+Additional trend-aware generation workflows
+4. STYLE ENGINE — Recommendation Intelligence
 
----
-
-### 4. STYLE ENGINE — Recommendation Intelligence
-
-The Style Engine is the central intelligence layer of FASHNOVA.
+The Style Engine is the central recommendation intelligence layer of FASHNOVA.
 
 It will combine:
 
-```text
 VISION
   +
 TRENDS
@@ -192,28 +182,25 @@ USER CONTEXT
     STYLE ENGINE
         ↓
   RECOMMENDATIONS
-```
 
-The Style Engine will be responsible for:
+The Style Engine is intended to provide:
 
-* Recommendation scoring
-* Recommendation ranking
-* Personalization
-* Context-aware recommendations
-* Combining visual and trend signals
-* Using Studio-generated creative signals
-* Learning from user feedback
-* Improving recommendations over time
+Recommendation scoring
+Recommendation ranking
+Personalization
+Context-aware recommendations
+Visual signal integration
+Trend signal integration
+Studio-generated creative signals
+User preference modeling
+Feedback-driven improvement
 
-Recommendation logic will remain on the backend rather than being implemented inside the frontend.
+Recommendation logic will remain on the backend/service layer rather than being implemented directly inside the frontend.
 
----
-
-# 🏗️ System Architecture
+🏗️ System Architecture
 
 FASHNOVA follows a modular full-stack architecture.
 
-```text
 ┌──────────────────────────────────────────────┐
 │               FASHNOVA WEB APP               │
 │                 React + Vite                 │
@@ -233,99 +220,98 @@ FASHNOVA follows a modular full-stack architecture.
        ┌──────────────┐    ┌────────────────────┐
        │ PostgreSQL   │    │  Python ML Services │
        │   + Prisma   │    │                    │
-       └──────────────┘    │ Vision   :8000     │
-                           │ Trends   :8001     │
-                           │ Studio   :8002     │
+       └──────────────┘    │ Vision       :8001 │
+                           │ Trends       :8002 │
+                           │ Studio       :8003 │
+                           │ Style Engine :8004 │
                            └────────────────────┘
-```
 
 The Node.js backend acts as the integration boundary between:
 
-* Frontend
-* Database
-* Vision ML service
-* Trends ML service
-* Studio GenAI service
-* Future Style Engine
+Frontend
+Database
+Authentication
+User profile
+Vision ML service
+Trends ML service
+Studio GenAI service
+Future Style Engine
+🔌 Service Architecture
+Service	Technology	Development Port	Purpose
+Frontend	React + Vite	5173	FASHNOVA web application
+Backend	Node.js + Express	5000	Main application API
+Vision	Python + FastAPI	8001	Computer Vision
+Trends	Python + FastAPI	8002	Trend intelligence
+Studio	Python + FastAPI	8003	Generative AI
+Style Engine	Python / ML	8004	Recommendation intelligence
+PostgreSQL	PostgreSQL	5432	Application database
 
----
+The independent service architecture allows each AI/ML component to be developed, tested, maintained, and eventually deployed independently.
 
-# 🛠️ Technology Stack
+🛠️ Technology Stack
+Frontend
+React
+Vite
+JavaScript
+React Router
+CSS
+ESLint
+Backend
+Node.js
+Express 5
+REST APIs
+Axios
+Zod validation
+JWT authentication
+bcryptjs
+CORS
+Multer
+Database
+PostgreSQL
+Prisma ORM
+Prisma PostgreSQL adapter
+Machine Learning & AI
+Python
+FastAPI
+Uvicorn
+PyTorch
+Torchvision
+Hugging Face Transformers
+Pillow
+scikit-learn
+Google GenAI SDK
+Computer Vision
 
-## Frontend
-
-* React
-* Vite
-* JavaScript
-* React Router
-* CSS
-* ESLint
-
-## Backend
-
-* Node.js
-* Express 5
-* REST APIs
-* Axios
-* Zod validation
-* JWT authentication
-* bcryptjs
-* CORS
-* Multer
-
-## Database
-
-* PostgreSQL
-* Prisma ORM
-* Prisma PostgreSQL adapter
-
-## Machine Learning & AI
-
-* Python
-* FastAPI
-* PyTorch
-* Torchvision
-* Hugging Face Transformers
-* Pillow
-* scikit-learn
-* Google GenAI SDK
-
-## Computer Vision
-
-**AutoCatalogAI CLIP Multitask Classifier V2**
+AutoCatalogAI CLIP Multitask Classifier V2
 
 Based on:
 
-* CLIP ViT-B/32
-* Multi-task classification
-* Fashion attribute prediction
-* Hierarchical classification
-* Color feature branch
-
-## Trends ML
+CLIP ViT-B/32
+Multi-task classification
+Fashion attribute prediction
+Hierarchical classification
+Color feature branch
+Trends ML
 
 The Trends ML pipeline includes:
 
-* Dataset processing
-* Feature engineering
-* Trend detection
-* Trend scoring
-* Trend lifecycle analysis
-* Forecasting
-* Forecast validation
-* Confidence estimation
-
-## Studio GenAI
+Dataset processing
+Data cleaning
+Feature engineering
+Normalized yearly trend signals
+Trend detection
+Trend scoring
+Trend lifecycle analysis
+Forecasting
+Forecast validation
+Confidence estimation
+Studio GenAI
 
 Studio uses a hosted image-generation model through the Google GenAI API.
 
-The architecture intentionally keeps large generative models outside the local machine so that the project can run on hardware without a dedicated NVIDIA GPU.
+The architecture intentionally keeps large generative models outside the local machine so that the project can run without requiring a dedicated local NVIDIA GPU for the generative workflow.
 
----
-
-# 📁 Project Structure
-
-```text
+📁 Project Structure
 FASHNOVA/
 │
 ├── backend/
@@ -349,6 +335,7 @@ FASHNOVA/
 │   │   │   ├── trends/
 │   │   │   └── studio/
 │   │   ├── validators/
+│   │   │   ├── profile/
 │   │   │   ├── vision/
 │   │   │   └── studio/
 │   │   └── utils/
@@ -369,9 +356,11 @@ FASHNOVA/
 │       │   ├── Vision.jsx
 │       │   ├── Trends.jsx
 │       │   ├── Studio.jsx
+│       │   ├── StyleEngine.jsx
 │       │   ├── Profile.jsx
 │       │   ├── Login.jsx
 │       │   └── Register.jsx
+│       │
 │       └── services/
 │
 ├── ml/
@@ -385,136 +374,103 @@ FASHNOVA/
 │   │   └── README.md
 │   │
 │   ├── trends/
-│   │   ├── app/
-│   │   ├── data/
-│   │   ├── features/
-│   │   ├── detection/
-│   │   ├── forecasting/
-│   │   ├── scoring/
-│   │   ├── services/
-│   │   ├── tests/
-│   │   ├── requirements.txt
-│   │   └── README.md
 │   │
-│   └── studio/
-│       ├── app/
-│       ├── conditioning/
-│       ├── generation/
-│       ├── prompting/
-│       ├── schemas/
-│       ├── services/
-│       ├── tests/
-│       ├── requirements.txt
-│       └── README.md
-│
-├── data/
-├── models/
-├── notebooks/
-├── docs/
-├── tests/
-├── .gitignore
-└── README.md
-```
-
----
-
-# 🚀 Implemented So Far
-
-## Project Foundation
-
-* [x] FASHNOVA project initialized
-* [x] Core architecture defined
-* [x] Vision / Trends / Studio / Style Engine architecture established
-* [x] Production-oriented folder structure established
-* [x] Git repository initialized
-* [x] GitHub repository connected
-* [x] Development checkpoints committed
-
-## Frontend
-
-* [x] React + Vite application
-* [x] React Router integration
-* [x] FASHNOVA navigation
-* [x] FASHNOVA logo integrated
-* [x] Home page
-* [x] Vision page
-* [x] Trends page
-* [x] Studio page
-* [x] Profile page foundation
-* [x] Login page
-* [x] Registration page
-* [x] Authentication context
-* [x] Vision upload interface
-* [x] Vision analysis result interface
-* [x] Trends intelligence interface
-* [x] Studio generation workspace
-* [x] Responsive styling for core pages
-* [x] AI/ML-first product presentation
-
-## Backend
-
-* [x] Node.js + Express backend
-* [x] Environment configuration
-* [x] Environment validation using Zod
-* [x] PostgreSQL integration
-* [x] Prisma integration
-* [x] Authentication APIs
-* [x] JWT authentication
-* [x] Password hashing
-* [x] Profile API foundation
-* [x] Global error handling
-* [x] Request validation middleware
-* [x] Vision routes
-* [x] Vision image upload endpoint
-* [x] Vision analysis endpoint
-* [x] Vision ML service communication
-* [x] Trends API
-* [x] Trends ML service communication
-* [x] Studio API
-* [x] Studio request validation
-* [x] Studio ML service communication
-
-## Trends ML
-
-* [x] Fashion dataset ingestion
-* [x] Data cleaning
-* [x] Normalized yearly trend signals
-* [x] Feature engineering
-* [x] Trend detection
-* [x] Trend lifecycle classification
-* [x] Trend scoring
-* [x] ML forecasting
-* [x] Forecast validation
-* [x] Forecast confidence estimation
-* [x] Trends FastAPI service
-* [x] Trends backend integration
-* [x] Trends frontend integration
-
-## Studio GenAI
-
-* [x] Studio Python service structure
-* [x] Studio request/response schemas
-* [x] Prompt builder
-* [x] Fashion context conditioning
-* [x] Trend context interface
-* [x] Vision context interface
-* [x] Gemini GenAI service integration
-* [x] Design generation workflow
-* [x] Studio FastAPI service
-* [x] Studio backend API
-* [x] Studio frontend workspace
-* [x] Studio backend → ML connection
-* [x] Generation validation and error handling
-* [ ] Concept generation workflow
-* [ ] Pattern generation workflow
-* [ ] Style variation generation workflow
-* [ ] Production image storage
-
----
-
-# 👁️ Vision Pipeline
-
-```text
+🚀 Implemented So Far
+Project Foundation
+ FASHNOVA project initialized
+ Core architecture defined
+ Vision / Trends / Studio / Style Engine architecture established
+ Production-oriented folder structure established
+ Git repository initialized
+ GitHub repository connected
+ Development checkpoints committed
+Frontend
+ React + Vite application
+ React Router integration
+ FASHNOVA navigation
+ FASHNOVA logo integrated
+ Home page
+ Vision page
+ Trends page
+ Studio page
+ Style Engine route
+ Profile page
+ Login page
+ Registration page
+ Authentication context
+ Vision upload interface
+ Vision analysis result interface
+ Trends intelligence interface
+ Studio generation workspace
+ Profile preference interface
+ Responsive styling for core pages
+ AI/ML-first product presentation
+Backend
+ Node.js + Express backend
+ Environment configuration
+ Environment validation using Zod
+ PostgreSQL integration
+ Prisma integration
+ Authentication APIs
+ JWT authentication
+ Password hashing
+ Profile API
+ User preference API
+ Profile preference validation
+ Global error handling
+ Request validation middleware
+ Vision routes
+ Vision image upload endpoint
+ Vision analysis endpoint
+ Vision ML service communication
+ Trends API
+ Studio API
+ Studio request validation
+ Studio ML service communication
+Vision ML
+ Vision FastAPI service
+ Vision application structure
+ Model loading
+ Model inference integration
+ Fashion attribute prediction
+ Prediction response structure
+ Vision health endpoint
+ Vision analysis endpoint
+ Local service verification
+Trends ML
+ Fashion dataset ingestion
+ Data cleaning
+ Normalized yearly trend signals
+ Feature engineering
+ Trend detection
+ Trend lifecycle classification
+ Trend scoring
+ ML forecasting
+ Forecast validation
+ Forecast confidence estimation
+ Trends FastAPI service
+ Trends local service verification
+ Backend integration verification
+ End-to-end Trends verification
+Studio GenAI
+ Studio Python service structure
+ Studio request/response schemas
+ Prompt builder
+ Fashion context conditioning
+ Trend context interface
+ Vision context interface
+ Gemini GenAI service integration
+ Design generation workflow
+ Studio FastAPI service
+ Studio backend API
+ Studio frontend workspace
+ Studio backend → ML connection
+ Generation validation and error handling
+ Concept generation workflow
+ Pattern generation workflow
+ Style variation generation workflow
+ Production image storage
+👁️ Vision Pipeline
 User
  ↓
 Upload Fashion Image
@@ -538,25 +494,19 @@ Vision ML Processing
 Return Fashion Attributes
  ↓
 Frontend Result
-```
 
-The current Vision pipeline is functional for local development.
+The Vision pipeline is designed as an independent ML service behind the Node.js backend.
 
 The model produces structured predictions for:
 
-* Gender
-* Master Category
-* Sub Category
-* Article Type
-* Base Colour
-* Season
-* Usage
-
----
-
-# 📈 Trends Pipeline
-
-```text
+Gender
+Master Category
+Sub Category
+Article Type
+Base Colour
+Season
+Usage
+📈 Trends Pipeline
 Fashion Dataset
        ↓
 Data Loading
@@ -578,15 +528,12 @@ FastAPI
 Node.js Backend
        ↓
 Trends UI
-```
 
-The Trends service runs independently from the Node.js backend and communicates through an HTTP API.
+The Trends ML service can run independently from the Node.js backend and exposes an HTTP API for trend analysis.
 
----
+The current development priority is to keep the stable application core isolated while ML service integration is finalized.
 
-# 🎨 Studio Pipeline
-
-```text
+🎨 Studio Pipeline
 User Prompt
      ↓
 Studio UI
@@ -610,39 +557,82 @@ Generated Image
 Backend Response
      ↓
 Studio UI
-```
 
 Studio is designed as a genuine GenAI service rather than a frontend-only simulation.
 
----
+👤 Profile & Personalization
 
-# 🔐 Security & Configuration
+FASHNOVA includes a user profile layer intended to provide the foundation for future personalization.
+
+Current profile preferences include:
+
+Preferred styles
+Preferred colors
+Preferred seasons
+Preferred categories
+Preferred fits
+Favorite brands
+Minimum budget
+Maximum budget
+
+The profile layer is designed to become an input to the future Style Engine.
+
+USER
+ ↓
+PROFILE
+ ↓
+PREFERENCES
+ ↓
+STYLE ENGINE
+ ↓
+PERSONALIZED RECOMMENDATIONS
+🔐 Security & Configuration
 
 Sensitive configuration is intentionally excluded from Git.
 
 Examples include:
 
-* Database credentials
-* JWT secrets
-* Gemini API keys
-* Local environment variables
-* Uploaded user images
-* Python virtual environments
-* Node modules
-* Model artifacts
-* Local development tooling
+Database credentials
+JWT secrets
+Gemini API keys
+Local environment variables
+Uploaded user images
+Python virtual environments
+Node modules
+Model artifacts
+Local development tooling
 
-A `.env.example` file should be used as a configuration template.
+A .env.example file should be used as a configuration template.
 
-**Never commit API keys or `.env` files containing secrets.**
+Never commit API keys or .env files containing secrets.
 
----
+⚙️ Environment Configuration
 
-# 🧪 Testing Strategy
+The backend uses environment variables for application and service configuration.
+
+Example:
+
+NODE_ENV=development
+
+PORT=5000
+
+FRONTEND_URL=http://localhost:5173
+
+VISION_ML_URL=http://127.0.0.1:8001
+TRENDS_ML_URL=http://127.0.0.1:8002
+STUDIO_ML_URL=http://127.0.0.1:8003
+STYLE_ENGINE_ML_URL=http://127.0.0.1:8004
+
+DATABASE_URL=your_database_url
+
+JWT_SECRET=your_jwt_secret
+
+The actual .env file must remain local and must never be committed.
+
+🧪 Testing Strategy
 
 FASHNOVA is being developed with testing and validation as part of the architecture.
 
-```text
 Unit Tests
     ↓
 Service Tests
@@ -654,321 +644,342 @@ ML Model Tests
 Integration Tests
     ↓
 End-to-End Tests
-```
 
 Future evaluation will include:
 
-* Classification accuracy
-* Precision
-* Recall
-* F1-score
-* Confidence analysis
-* Error analysis
-* Forecast validation
-* Model latency
-* CPU/GPU performance
-* Domain-shift evaluation
-* API reliability
-* End-to-end workflow validation
+Classification accuracy
+Precision
+Recall
+F1-score
+Confidence analysis
+Error analysis
+Forecast validation
+Model latency
+CPU/GPU performance
+Domain-shift evaluation
+API reliability
+End-to-end workflow validation
+📌 Development Status
+Overall Project
 
----
+Phase: Core Application Stabilization & Deployment Preparation
 
-# 📌 Development Status
+Module	Status
+Project Architecture	🟢 Established
+Frontend Foundation	🟢 Implemented
+Authentication	🟢 Implemented
+Database Foundation	🟢 Implemented
+Backend Foundation	🟢 Implemented
+Profile & Preferences	🟢 Implemented
+Vision	🟢 Implemented
+Vision ML Service	🟢 Local implementation
+Trends ML	🟢 Local implementation
+Trends API	🟡 Integration verification
+Trends UI	🟢 Implemented
+Studio GenAI Architecture	🟢 Implemented
+Studio API	🟢 Implemented
+Studio UI	🟢 Implemented
+Studio ML Service	🟢 Local implementation
+Style Engine	🔵 Planned
+Recommendation System	🔵 Planned
+End-to-End Integration	🔵 Planned
+Production Deployment	🔵 Planned
+Status Legend
+🟢 Implemented / established
+🟡 In progress / verification required
+🔵 Planned
+🗺️ Development Roadmap
+Phase 1 — Foundation
+ Project architecture
+ Technology stack
+ Repository structure
+ Frontend foundation
+ Backend foundation
+ Database foundation
+ Authentication
+ Profile and preferences
+Phase 2 — Vision
+ Vision UI
+ Image upload
+ Image storage
+ Vision database entities
+ Vision API
+ Python Vision service
+ Model architecture reconstruction
+ Model checkpoint loading
+ Model inference integration
+ Prediction normalization
+ Vision result handling
+ Broader model evaluation
+ Production hardening
+Phase 3 — Trends
+ Fashion dataset pipeline
+ Data cleaning
+ Feature engineering
+ Trend detection
+ Trend lifecycle classification
+ Trend scoring
+ Historical analysis
+ Seasonal signal support
+ ML forecasting
+ Forecast validation
+ Forecast confidence estimation
+ Trends FastAPI service
+ Trends UI
+ Backend integration verification
+ End-to-end verification
+Phase 4 — Studio
+ GenAI architecture
+ Fashion generation schema
+ Prompt construction
+ Fashion context conditioning
+ Trend-aware conditioning interface
+ Vision-aware conditioning interface
+ Design generation workflow
+ Gemini image-generation integration
+ Studio API
+ Studio UI
+ Concept generation workflow
+ Pattern generation workflow
+ Style variation generation workflow
+ Production image storage
+Phase 5 — Style Engine
+ User preference modeling
+ Vision signal integration
+ Trend signal integration
+ Studio signal integration
+ Recommendation feature engineering
+ Recommendation scoring
+ Recommendation ranking
+ Personalization
+ Context-aware recommendations
+ Feedback loop
+ Recommendation API
+Phase 6 — Integration
+ Connect Vision → Style Engine
+ Connect Trends → Style Engine
+ Connect Studio → Style Engine
+ Connect user profile → Style Engine
+ Complete recommendation workflow
+ End-to-end testing
+Phase 7 — Evaluation & Deployment
+ Backend testing
+ ML evaluation
+ Integration testing
+ Security testing
+ Performance testing
+ Production configuration
+ Object/image storage
+ Production database
+ Backend deployment
+ Frontend deployment
+ ML service deployment
+ Monitoring
+ Documentation
+💻 Local Development
+Prerequisites
 
-### Overall Project
+Make sure the following are installed:
 
-**Phase: Core Intelligence Modules Completed — Style Engine Next**
+Node.js
+npm
+Python
+PostgreSQL
+Git
+Backend
 
-| Module                    | Status         |
-| ------------------------- | -------------- |
-| Project Architecture      | 🟢 Established |
-| Frontend Foundation       | 🟢 Implemented |
-| Authentication            | 🟢 Implemented |
-| Database Foundation       | 🟢 Implemented |
-| Backend Foundation        | 🟢 Implemented |
-| Vision                    | 🟢 Implemented |
-| Vision ML Service         | 🟢 Implemented |
-| Trends ML                 | 🟢 Implemented |
-| Trends API                | 🟢 Implemented |
-| Trends UI                 | 🟢 Implemented |
-| Studio GenAI Architecture | 🟢 Implemented |
-| Studio API                | 🟢 Implemented |
-| Studio UI                 | 🟢 Implemented |
-| Studio ML Service         | 🟢 Implemented |
-| Style Engine              | 🔵 Next        |
-| Recommendation System     | 🔵 Planned     |
-| End-to-End Integration    | 🔵 Planned     |
-| Production Deployment     | 🔵 Planned     |
+From the FASHNOVA root:
 
-### Status Legend
-
-* 🟢 Implemented
-* 🟡 In Progress
-* 🔵 Planned
-
----
-
-# 🗺️ Development Roadmap
-
-## Phase 1 — Foundation
-
-* [x] Project architecture
-* [x] Technology stack
-* [x] Repository structure
-* [x] Frontend foundation
-* [x] Backend foundation
-* [x] Database foundation
-
-## Phase 2 — Vision
-
-* [x] Vision UI
-* [x] Image upload
-* [x] Image storage
-* [x] Vision database entities
-* [x] Vision API
-* [x] Python Vision service
-* [x] Model architecture reconstruction
-* [x] Model checkpoint loading
-* [x] Model inference integration
-* [x] Prediction normalization
-* [x] Vision result handling
-* [ ] Broader model evaluation
-* [ ] Production hardening
-
-## Phase 3 — Trends
-
-* [x] Fashion dataset pipeline
-* [x] Data cleaning
-* [x] Feature engineering
-* [x] Trend detection
-* [x] Trend lifecycle classification
-* [x] Trend scoring
-* [x] Historical analysis
-* [x] Seasonal signal support
-* [x] ML forecasting
-* [x] Forecast validation
-* [x] Forecast confidence estimation
-* [x] Trend API
-* [x] Trends UI
-
-## Phase 4 — Studio
-
-* [x] GenAI architecture
-* [x] Fashion generation schema
-* [x] Prompt construction
-* [x] Fashion context conditioning
-* [x] Trend-aware conditioning interface
-* [x] Vision-aware conditioning interface
-* [x] Design generation workflow
-* [x] Gemini image-generation integration
-* [x] Studio API
-* [x] Studio UI
-* [ ] Concept generation workflow
-* [ ] Pattern generation workflow
-* [ ] Style variation generation workflow
-* [ ] Production image storage
-
-## Phase 5 — Style Engine
-
-* [ ] User preference modeling
-* [ ] Vision signal integration
-* [ ] Trend signal integration
-* [ ] Studio signal integration
-* [ ] Recommendation feature engineering
-* [ ] Recommendation scoring
-* [ ] Recommendation ranking
-* [ ] Personalization
-* [ ] Context-aware recommendations
-* [ ] Feedback loop
-* [ ] Recommendation API
-
-## Phase 6 — Integration
-
-* [ ] Connect Vision → Style Engine
-* [ ] Connect Trends → Style Engine
-* [ ] Connect Studio → Style Engine
-* [ ] Connect user profile → Style Engine
-* [ ] Complete recommendation workflow
-* [ ] End-to-end testing
-
-## Phase 7 — Evaluation & Deployment
-
-* [ ] Backend testing
-* [ ] ML evaluation
-* [ ] Integration testing
-* [ ] Security testing
-* [ ] Performance testing
-* [ ] Production configuration
-* [ ] Object/image storage
-* [ ] Deployment
-* [ ] Monitoring
-* [ ] Documentation
-
----
-
-# 💻 Local Development
-
-## Backend
-
-```bash
 cd backend
 npm install
 npm run dev
-```
 
 Backend:
 
-```text
 http://localhost:5000
-```
 
 Health endpoint:
 
-```text
 /api/health
-```
+Frontend
 
----
+From the FASHNOVA root:
 
-## Frontend
-
-```bash
 cd frontend
 npm install
 npm run dev
-```
 
-The frontend is served using Vite.
+Frontend:
 
----
+http://localhost:5173
+Vision ML Service
 
-## Vision ML Service
+Run from the FASHNOVA project root:
 
-From the FASHNOVA project root:
-
-```bash
-uvicorn ml.vision.app.main:app --host 127.0.0.1 --port 8000
-```
+python -m uvicorn ml.vision.app.main:app --host 127.0.0.1 --port 8001
 
 Service:
 
-```text
-http://127.0.0.1:8000
-```
-
-Health endpoint:
-
-```text
-/health
-```
-
----
-
-## Trends ML Service
-
-From the FASHNOVA project root:
-
-```bash
-uvicorn ml.trends.app.main:app --host 127.0.0.1 --port 8001
-```
-
-Service:
-
-```text
 http://127.0.0.1:8001
-```
 
 Health endpoint:
 
-```text
 /health
-```
 
 Analysis endpoint:
 
-```text
 /analyze
-```
+Trends ML Service
 
----
+Run from the FASHNOVA project root:
 
-## Studio ML Service
-
-From the FASHNOVA project root:
-
-```bash
-uvicorn ml.studio.app.main:app --host 127.0.0.1 --port 8002
-```
+python -m uvicorn ml.trends.app.main:app --host 127.0.0.1 --port 8002
 
 Service:
 
-```text
 http://127.0.0.1:8002
-```
 
 Health endpoint:
 
-```text
 /health
-```
+
+Analysis endpoint:
+
+/analyze
+Studio ML Service
+
+Run from the FASHNOVA project root:
+
+python -m uvicorn ml.studio.app.main:app --host 127.0.0.1 --port 8003
+
+Service:
+
+http://127.0.0.1:8003
+
+Health endpoint:
+
+/health
 
 Generation endpoint:
 
-```text
 /generate
-```
 
-Studio actual image generation requires a configured `GEMINI_API_KEY` in the local `ml/studio/.env` file.
+Studio image generation requires a configured GEMINI_API_KEY.
 
 API credentials must never be committed to Git.
 
----
+🗄️ Database
 
-# 🌐 Repository
+FASHNOVA uses:
+
+PostgreSQL
+Prisma ORM
+
+The application database contains structured entities for areas such as:
+
+Users
+User preferences
+Fashion items
+Fashion images
+Vision analysis
+Authentication-related data
+
+Database configuration is provided through:
+
+DATABASE_URL=your_database_url
+
+Database schema changes should be validated before production migrations are applied.
+
+🌐 Repository
 
 The source code is maintained on GitHub:
 
-**PDisha-01/FASHNOVA**
+PDisha-01/FASHNOVA
 
 The repository contains:
 
-* Frontend application
-* Node.js backend
-* PostgreSQL/Prisma database layer
-* Vision ML service
-* Trends ML service
-* Studio GenAI service
-* Project documentation
+Frontend application
+Node.js backend
+PostgreSQL/Prisma database layer
+Vision ML service
+Trends ML service
+Studio GenAI service
+Documentation
+Data and ML project structure
+🚀 Deployment Strategy
 
----
+FASHNOVA is being prepared for staged deployment.
 
-# ⚠️ Current Limitations
+The intended production architecture is:
+
+                         INTERNET
+                            │
+                            ↓
+                  ┌──────────────────┐
+                  │ FASHNOVA WEB APP │
+                  │ React + Vite     │
+                  └────────┬─────────┘
+                           │
+                           ↓
+                  ┌──────────────────┐
+                  │   BACKEND API    │
+                  │ Node + Express   │
+                  └───────┬──────────┘
+                          │
+              ┌───────────┼───────────┐
+              ↓           ↓           ↓
+        PostgreSQL      Vision      Trends
+                        ML Service   ML Service
+                            │           │
+                            └─────┬─────┘
+                                  ↓
+                               Studio
+                               GenAI
+                                  │
+                                  ↓
+                           Style Engine
+
+Deployment will be performed in stages:
+
+Production database
+Backend API
+Frontend application
+Production environment configuration
+ML service deployment
+ML service integration
+End-to-end testing
+Monitoring and production hardening
+
+The stable application core should be deployed and verified before additional ML changes are introduced.
+
+This allows individual ML services to be developed or upgraded without unnecessarily destabilizing the frontend, backend, authentication, profile, and database foundation.
+
+⚠️ Current Limitations
 
 FASHNOVA is currently under active development.
 
 At the current stage:
 
-* Vision, Trends, and Studio are implemented for local development.
-* Vision and Trends use dedicated Python FastAPI services behind the Node.js backend.
-* Studio uses a hosted GenAI image-generation provider and requires appropriate API quota/project configuration for actual image generation.
-* Studio currently has the design generation workflow implemented; additional generation types remain future work.
-* The Style Engine has not yet been implemented.
-* Production object storage has not yet been configured.
-* Production deployment has not yet been completed.
-* Broader ML evaluation and production hardening remain future work.
-* ML services are currently developed and tested locally.
+Vision is implemented as a local ML service.
+Trends ML is implemented as a local ML service.
+Trends backend integration still requires final verification.
+Studio architecture and local service integration are implemented.
+Studio requires a configured Gemini API key for actual image generation.
+The Style Engine has not yet been implemented.
+Production object/image storage has not yet been configured.
+Production deployment has not yet been completed.
+Broader ML evaluation remains future work.
+Production hardening remains future work.
+ML services are currently developed and tested locally.
 
-These limitations are expected at the current development phase.
+These limitations are expected during the current development phase.
 
----
+🎯 Project Goal
 
-# 🎯 Project Goal
-
-FASHNOVA is being developed beyond a basic CRUD or AI-demo application.
+FASHNOVA is being developed beyond a basic CRUD application or isolated AI demo.
 
 The long-term goal is to build a complete fashion intelligence pipeline:
 
-```text
 Fashion Image
       ↓
 Computer Vision
@@ -989,31 +1000,65 @@ Fashion Understanding
           Recommendations
                  ↓
              FASHNOVA
-```
 
 The system is designed so that each intelligence layer contributes meaningful information to the final recommendation experience.
 
----
+🧩 Engineering Principles
 
-# 📄 License
+FASHNOVA is being developed with the following principles:
+
+Modular Architecture
+
+Each intelligence capability has its own module and service boundary.
+
+Production-Oriented Structure
+
+The project uses:
+
+Environment configuration
+Input validation
+Error handling
+Service separation
+Database abstraction
+API boundaries
+Testing
+Deployment considerations
+AI/ML-First Product
+
+AI and ML are core components of FASHNOVA rather than optional features added to a conventional fashion website.
+
+Personalization
+
+User preferences and fashion intelligence are designed to work together through the Style Engine.
+
+Independent ML Services
+
+Vision, Trends, Studio, and Style Engine are separated so that each intelligence system can be developed, tested, and eventually deployed independently.
+
+Stable Core Application
+
+The frontend, backend, authentication, profile, and database foundation should remain stable while individual ML services are developed and improved.
+
+📄 License
 
 License information will be added as the project approaches its release/deployment stage.
 
----
-
-## 🚧 Development
+🚧 Development
 
 FASHNOVA is currently under active development.
 
 The architecture, database, backend, AI/ML services, and frontend are being developed incrementally with emphasis on:
 
-* Clean architecture
-* Modularity
-* Validation
-* Error handling
-* Model versioning
-* Testing
-* Security
-* Maintainability
-* Deployment readiness
-* Scalable AI/ML integration
+Clean architecture
+Modularity
+Validation
+Error handling
+Model versioning
+Testing
+Security
+Maintainability
+Deployment readiness
+Scalable AI/ML integration
+FASHNOVA
+Fashion Meets Intelligence
+
