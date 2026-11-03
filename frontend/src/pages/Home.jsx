@@ -1,7 +1,101 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import { useAuth } from "../context/useAuth";
+
+const RUNWAY_COLLECTIONS = [
+  {
+    id: "runway-01",
+    tag: "PARIS COUTURE · RUNWAY 01",
+    category: "HAUTE COUTURE",
+    title: "Sculptural Crimson & Rose Silk Gown",
+    image: "/fashion/runway-couture.jpg",
+    season: "Fall / Winter Couture",
+    confidence: "98.4%",
+    momentum: "+28% Momentum",
+    silhouette: "Sculptural Fluted Column",
+    fabric: "Double-Faced Silk Charmeuse & Organza",
+    colors: [
+      { name: "Wine Crimson", hex: "#6e1b30" },
+      { name: "Dusty Rose", hex: "#b94361" },
+      { name: "Pale Pearl", hex: "#f3ded8" },
+      { name: "Noir", hex: "#1c0b13" },
+    ],
+    description: "Architectural fluted column with asymmetric draped shoulder folds, constructed from double-faced silk charmeuse with hand-finished organza accents.",
+    studioPrompt: "Haute couture sculptural evening gown in crimson and rose silk with architectural shoulder drapery",
+  },
+  {
+    id: "runway-02",
+    tag: "MILAN TAILORING · RUNWAY 02",
+    category: "ARCHITECTURAL TAILORING",
+    title: "Sculpted Ivory Structured Wool Blazer",
+    image: "/fashion/runway-tailoring.jpg",
+    season: "Autumn / Winter Tailoring",
+    confidence: "96.8%",
+    momentum: "+19% Momentum",
+    silhouette: "Boxy Double-Breasted Structure",
+    fabric: "Double-Faced Melton Wool & Cashmere",
+    colors: [
+      { name: "Pristine Ivory", hex: "#f8f6f0" },
+      { name: "Warm Sand", hex: "#d8cfc4" },
+      { name: "Espresso", hex: "#4b3f3b" },
+      { name: "Noir", hex: "#1e1b18" },
+    ],
+    description: "Razor-sharp tailored blazer featuring peak architectural lapels, dropped padded shoulders, and hidden closure in premium Italian wool.",
+    studioPrompt: "Oversized ivory structured wool blazer with architectural peak lapels and tailored minimal silhouette",
+  },
+  {
+    id: "runway-03",
+    tag: "TOKYO NEO-LUXURY · RUNWAY 03",
+    category: "AVANT-GARDE",
+    title: "Liquid Metallic Noir Architectural Trench",
+    image: "/fashion/runway-avantgarde.jpg",
+    season: "Spring / Forward Avant-Garde",
+    confidence: "95.2%",
+    momentum: "+34% Momentum",
+    silhouette: "Storm-Flap Oversized Duster",
+    fabric: "Treated Liquid Metallic Membrane & Nylon",
+    colors: [
+      { name: "Pitch Noir", hex: "#0e0f14" },
+      { name: "Metallic Silver", hex: "#9ea5b0" },
+      { name: "Deep Slate", hex: "#2b2e3b" },
+      { name: "Chrome", hex: "#e4e7ec" },
+    ],
+    description: "Futuristic oversized trench engineered with liquid metallic sheen, dramatic oversized storm flaps, and industrial high-collar throat latch.",
+    studioPrompt: "Avant-garde metallic silver and black liquid trench coat with architectural storm flaps and high futuristic collar",
+  },
+  {
+    id: "runway-04",
+    tag: "RIVIERA CRUISE · RUNWAY 04",
+    category: "CONTEMPORARY RESORT",
+    title: "Plissé Champagne Silk Maxi Dress",
+    image: "/fashion/runway-resort.jpg",
+    season: "High Summer Resort Edition",
+    confidence: "97.1%",
+    momentum: "+22% Momentum",
+    silhouette: "Fluid Micro-Pleated Plissé Column",
+    fabric: "100% Micro-Pleated Silk Chiffon",
+    colors: [
+      { name: "Champagne Plissé", hex: "#e9dec7" },
+      { name: "Golden Sand", hex: "#cbb692" },
+      { name: "Raw Umber", hex: "#695741" },
+      { name: "Warm Bark", hex: "#302720" },
+    ],
+    description: "Sculptural tiered maxi dress engineered with permanent plissé micro-pleating, creating fluid liquid motion with every step in golden-hour hues.",
+    studioPrompt: "Micro-pleated plissé champagne silk maxi dress with fluid drape and elegant sculptural neckline",
+  },
+];
 
 function Home() {
+  const { isAuthenticated, user } = useAuth();
+  const [activeCategory, setActiveCategory] = useState("ALL");
+  const [selectedLook, setSelectedLook] = useState(null);
+  const userGreeting = user?.profile?.firstName?.toUpperCase() || "PROFILE";
+
+  const filteredLooks =
+    activeCategory === "ALL"
+      ? RUNWAY_COLLECTIONS
+      : RUNWAY_COLLECTIONS.filter((l) => l.category === activeCategory);
   return (
     <div className="fashnova-home">
       {/* =========================
@@ -25,7 +119,7 @@ function Home() {
 </nav>
 
         <Link to="/profile" className="fashion-profile">
-          PROFILE <span>↗</span>
+          {isAuthenticated ? userGreeting : "SIGN IN"} <span>↗</span>
         </Link>
       </header>
 
@@ -69,6 +163,12 @@ function Home() {
           <div className="hero-right">
             <div className="hero-image-frame">
               <div className="hero-image-glow"></div>
+
+              <img
+                src="/fashion/hero-fashion.jpg"
+                alt="FASHNOVA Haute Couture Editorial"
+                className="hero-editorial-img"
+              />
 
               <div className="hero-orbit orbit-1"></div>
               <div className="hero-orbit orbit-2"></div>
@@ -141,6 +241,192 @@ function Home() {
               fashion intelligence system.
             </p>
           </div>
+        </section>
+
+        {/* =========================
+            RUNWAY & COUTURE INTELLIGENCE
+        ========================= */}
+        <section className="runway-intelligence-section">
+          <div className="runway-header">
+            <div>
+              <span className="section-index">003 / EDITORIAL COLLECTIONS</span>
+              <h2>RUNWAY INTELLIGENCE.</h2>
+            </div>
+            <p>
+              Runway and haute couture silhouettes deconstructed through computer vision,
+              real-time trend momentum, and generative intelligence.
+            </p>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="runway-filters">
+            {[
+              ["ALL", "ALL EDITORIALS"],
+              ["HAUTE COUTURE", "HAUTE COUTURE"],
+              ["ARCHITECTURAL TAILORING", "ARCHITECTURAL TAILORING"],
+              ["AVANT-GARDE", "AVANT-GARDE"],
+              ["CONTEMPORARY RESORT", "CONTEMPORARY RESORT"],
+            ].map(([catKey, catLabel]) => (
+              <button
+                key={catKey}
+                type="button"
+                className={`runway-filter-btn ${activeCategory === catKey ? "active" : ""}`}
+                onClick={() => setActiveCategory(catKey)}
+              >
+                {catLabel}
+              </button>
+            ))}
+          </div>
+
+          {/* Runway Cards Grid */}
+          <div className="runway-cards-grid">
+            {filteredLooks.map((look) => (
+              <article key={look.id} className="runway-card">
+                <div className="runway-img-wrapper" onClick={() => setSelectedLook(look)}>
+                  <img src={look.image} alt={look.title} loading="lazy" />
+                  <span className="runway-tag">{look.tag}</span>
+                  <div className="runway-hover-overlay">
+                    <span>INSPECT INTELLIGENCE ↗</span>
+                  </div>
+                </div>
+
+                <div className="runway-card-info">
+                  <div className="runway-meta-row">
+                    <span className="runway-category">{look.category}</span>
+                    <span className="runway-momentum">{look.momentum}</span>
+                  </div>
+
+                  <strong className="runway-title" onClick={() => setSelectedLook(look)}>
+                    {look.title}
+                  </strong>
+
+                  <div className="runway-specs-summary">
+                    <span>{look.silhouette}</span> · <small>{look.fabric.split("&")[0]}</small>
+                  </div>
+
+                  <div className="runway-palette-bar">
+                    {look.colors.map((c, i) => (
+                      <span
+                        key={i}
+                        className="runway-swatch-dot"
+                        style={{ backgroundColor: c.hex }}
+                        title={`${c.name} (${c.hex})`}
+                      ></span>
+                    ))}
+                    <span className="runway-confidence-score">Vision {look.confidence}</span>
+                  </div>
+
+                  <div className="runway-card-actions">
+                    <button
+                      type="button"
+                      className="runway-inspect-btn"
+                      onClick={() => setSelectedLook(look)}
+                    >
+                      Inspect Intelligence ↗
+                    </button>
+                    <Link
+                      to="/studio"
+                      className="runway-recreate-btn"
+                      title="Recreate in Studio"
+                    >
+                      Studio ✦
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {/* Interactive Runway Look Inspector Modal */}
+          {selectedLook && (
+            <div className="runway-modal-backdrop" onClick={() => setSelectedLook(null)}>
+              <div
+                className="runway-modal-content"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="runway-modal-close"
+                  onClick={() => setSelectedLook(null)}
+                >
+                  ✕
+                </button>
+
+                <div className="runway-modal-grid">
+                  <div className="runway-modal-image-col">
+                    <img src={selectedLook.image} alt={selectedLook.title} />
+                    <span className="runway-modal-tag">{selectedLook.tag}</span>
+                  </div>
+
+                  <div className="runway-modal-info-col">
+                    <div className="runway-modal-eyebrow">
+                      <span>{selectedLook.category}</span>
+                      <span>{selectedLook.season}</span>
+                    </div>
+
+                    <h3>{selectedLook.title}</h3>
+
+                    <div className="runway-modal-metrics">
+                      <div className="runway-metric-box">
+                        <span>VISION CONFIDENCE</span>
+                        <strong>{selectedLook.confidence}</strong>
+                      </div>
+                      <div className="runway-metric-box">
+                        <span>TREND MOMENTUM</span>
+                        <strong className="positive">{selectedLook.momentum}</strong>
+                      </div>
+                    </div>
+
+                    <div className="runway-modal-details">
+                      <div className="runway-detail-row">
+                        <span>SILHOUETTE</span>
+                        <strong>{selectedLook.silhouette}</strong>
+                      </div>
+                      <div className="runway-detail-row">
+                        <span>TEXTILE / FABRIC</span>
+                        <strong>{selectedLook.fabric}</strong>
+                      </div>
+                    </div>
+
+                    <div className="runway-modal-palette">
+                      <span>COLOR PALETTE HARMONY</span>
+                      <div className="runway-palette-chips">
+                        {selectedLook.colors.map((c, i) => (
+                          <div key={i} className="runway-color-chip">
+                            <span
+                              className="runway-chip-dot"
+                              style={{ backgroundColor: c.hex }}
+                            ></span>
+                            <small>{c.name} ({c.hex})</small>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="runway-modal-description">
+                      <span>CURATED EDITORIAL NOTES</span>
+                      <p>{selectedLook.description}</p>
+                    </div>
+
+                    <div className="runway-modal-actions">
+                      <Link
+                        to="/studio"
+                        className="runway-modal-studio-link"
+                      >
+                        CREATE IN STUDIO ↗
+                      </Link>
+                      <Link
+                        to="/vision"
+                        className="runway-modal-vision-link"
+                      >
+                        ANALYZE IN VISION ↗
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* =========================
@@ -350,6 +636,11 @@ function Home() {
           </div>
 
           <div className="feature-visual vision-visual">
+            <img
+              src="/fashion/runway-tailoring.jpg"
+              alt="Vision Scanner Garment"
+              className="feature-fashion-photo"
+            />
             <div className="scan-grid"></div>
 
             <div className="scan-box">
@@ -463,6 +754,11 @@ function Home() {
           </div>
 
           <div className="feature-visual studio-visual">
+            <img
+              src="/fashion/studio-dress-emerald.jpg"
+              alt="Studio Generative Concept"
+              className="feature-fashion-photo"
+            />
             <div className="studio-ring ring-a"></div>
             <div className="studio-ring ring-b"></div>
             <div className="studio-ring ring-c"></div>

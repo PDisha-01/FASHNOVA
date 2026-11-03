@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import Navbar from "../components/Navbar";
+import { uploadVisionImageFile, analyzeVisionImage } from "../services/api";
 
-const API_URL = "http://localhost:5000";
+
 
 function Vision() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -53,24 +55,7 @@ function Vision() {
       // Later the Vision model can determine this automatically.
       formData.append("category", "FULL_OUTFIT");
 
-      const uploadResponse = await fetch(
-        `${API_URL}/api/vision/images`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const uploadResult = await uploadResponse.json();
-
-      if (!uploadResponse.ok) {
-        throw new Error(
-          uploadResult?.error?.message ||
-            "Image upload failed."
-        );
-      }
-
-      const imageData = uploadResult.data;
+      const imageData = await uploadVisionImageFile(formData);
 
       setUploadedImage(imageData);
       setUploadStatus("uploaded");
@@ -81,29 +66,9 @@ function Vision() {
 
       setUploadStatus("analyzing");
 
-      const analysisResponse = await fetch(
-        `${API_URL}/api/vision/analyze`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fashionImageId: imageData.fashionImage.id,
-          }),
-        }
-      );
+      const analysisResult = await analyzeVisionImage(imageData.fashionImage.id);
 
-      const analysisResult = await analysisResponse.json();
-
-      if (!analysisResponse.ok) {
-        throw new Error(
-          analysisResult?.error?.message ||
-            "Vision analysis could not be started."
-        );
-      }
-
-      setAnalysis(analysisResult.data.analysis);
+      setAnalysis(analysisResult.analysis);
 
       // The current backend creates a PENDING analysis.
       // It will become COMPLETED once the real CV model is implemented.
@@ -159,32 +124,7 @@ function Vision() {
           NAVBAR
       ========================= */}
 
-      <header className="navbar">
-        <Link to="/" className="brand">
-          <img
-            src="/logo.png"
-            alt="FASHNOVA logo"
-            className="brand-logo"
-          />
-
-          <div className="brand-text">
-            <span>FASHNOVA</span>
-            <small>FASHION MEETS INTELLIGENCE</small>
-          </div>
-        </Link>
-
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/vision">Vision</Link>
-          <Link to="/trends">Trends</Link>
-          <Link to="/studio">Studio</Link>
-           <Link to="/style-engine">STYLE ENGINE</Link>
-        </nav>
-
-        <Link to="/profile" className="profile-button">
-          Profile
-        </Link>
-      </header>
+      <Navbar />
 
 
       <main>

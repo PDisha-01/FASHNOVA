@@ -1,6 +1,13 @@
 import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 function Navbar() {
+  const { user, isAuthenticated } = useAuth();
+
+  const userDisplayName =
+    user?.profile?.firstName?.trim() ||
+    (user?.email ? user.email.split("@")[0] : null);
+
   return (
     <header className="navbar">
       <Link to="/" className="brand">
@@ -33,7 +40,7 @@ function Navbar() {
           Studio
         </NavLink>
 
-        <NavLink to="/studio">
+        <NavLink to="/style-engine">
           Style Engine
         </NavLink>
       </nav>
@@ -44,7 +51,11 @@ function Navbar() {
           isActive ? "profile-button active" : "profile-button"
         }
       >
-        Profile
+        {isAuthenticated
+          ? userDisplayName
+            ? `Profile (${userDisplayName})`
+            : "Profile"
+          : "Sign In"}
       </NavLink>
     </header>
   );

@@ -6,7 +6,7 @@ export const recommendStyleController = async (
   next
 ) => {
   try {
-    const result = await recommendStyle(req.body);
+    const result = await recommendStyle(req.body, req.user);
 
     return res.status(200).json(result);
   } catch (error) {

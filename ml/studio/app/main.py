@@ -32,6 +32,9 @@ def generate(request: GenerationRequest):
             detail=result.error,
         )
 
+    return result
+
+
 @app.post("/generate/preview")
 def generate_preview(request: GenerationRequest):
     from studio.prompting.prompt_builder import prompt_builder
@@ -45,4 +48,3 @@ def generate_preview(request: GenerationRequest):
         "model": "gemini",
         "message": "Generation request validated successfully.",
     }
-    return result

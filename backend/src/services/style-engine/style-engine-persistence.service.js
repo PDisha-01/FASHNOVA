@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
 /**
  * Persist a Style Engine recommendation request and its recommendations.

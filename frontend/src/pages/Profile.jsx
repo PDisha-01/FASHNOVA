@@ -18,6 +18,8 @@ function Profile() {
     user: authUser,
     logout,
     isAuthenticated,
+    loading: authLoading,
+    refreshUser,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -40,10 +42,10 @@ function Profile() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
       navigate("/login", { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [authLoading, isAuthenticated, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -101,6 +103,10 @@ function Profile() {
         preferences: updatedPreferences,
       }));
 
+      if (refreshUser) {
+        await refreshUser();
+      }
+
       setEditingPreferences(false);
     } catch (err) {
       setError(
@@ -133,11 +139,7 @@ function Profile() {
     navigate("/login", { replace: true });
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="app">
         <Navbar />
@@ -156,6 +158,10 @@ function Profile() {
         <Footer />
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   if (error && !profile) {
@@ -413,7 +419,7 @@ function Profile() {
             <IntelligenceCard
               type="VISION"
               subtitle="Computer Vision"
-              count="0 analyses"
+              count={`${profile?.counts?.fashionItems || 0} items`}
               description="Analyze outfits and understand your visual fashion style."
               action="Start Analyzing"
               to="/vision"
@@ -422,7 +428,7 @@ function Profile() {
             <IntelligenceCard
               type="STUDIO"
               subtitle="Gen AI"
-              count="0 creations"
+              count={`${profile?.counts?.studioGenerations || 0} creations`}
               description="Create personalized looks, concepts and fashion ideas."
               action="Create Your Look"
               to="/studio"
@@ -431,11 +437,10 @@ function Profile() {
             <IntelligenceCard
               type="STYLE ENGINE"
               subtitle="Recommendation"
-              count="Coming soon"
+              count={`${profile?.counts?.styleRecommendationRequests || 0} recommendations`}
               description="Turn your fashion identity into personalized recommendations."
               action="Explore Style Engine"
               to="/style-engine"
-              muted
             />
           </div>
         </section>

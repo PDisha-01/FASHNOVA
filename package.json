@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "form-data": "^4.0.6"
+  "name": "fashnova",
+  "version": "1.0.0",
+  "description": "FASHNOVA - AI-Powered Fashion Intelligence Platform",
+  "type": "module",
+  "scripts": {
+    "dev": "node runner.js",
+    "start": "node runner.js",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "ml": "python ml/run_all_services.py"
   }
 }

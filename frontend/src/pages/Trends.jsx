@@ -2,8 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-
-const API_URL = "http://localhost:5000";
+import Navbar from "../components/Navbar";
+import { fetchTrends } from "../services/api";
 
 function Trends() {
   const [trendData, setTrendData] = useState(null);
@@ -17,21 +17,7 @@ function Trends() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API_URL}/api/trends/analyze`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            horizon: 2,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to load trend intelligence.");
-        }
-
-        const data = await response.json();
+        const data = await fetchTrends(2);
 
         if (data.status !== "success" || !data.attributes) {
           throw new Error("Invalid trend response.");
@@ -260,32 +246,7 @@ function Trends() {
           NAVBAR
           ===================================================== */}
 
-      <header className="navbar trends-navbar">
-        <Link to="/" className="brand">
-          <img
-            src="/logo.png"
-            alt="FASHNOVA logo"
-            className="brand-logo"
-          />
-
-          <div className="brand-text">
-            <span>FASHNOVA</span>
-            <small>FASHION MEETS INTELLIGENCE</small>
-          </div>
-        </Link>
-
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/vision">Vision</Link>
-          <Link to="/trends">Trends</Link>
-          <Link to="/studio">Studio</Link>
-           <Link to="/style-engine">STYLE ENGINE</Link>
-        </nav>
-
-        <Link to="/profile" className="profile-button">
-          Profile
-        </Link>
-      </header>
+      <Navbar />
 
       <main className="trends-main">
         {/* =====================================================

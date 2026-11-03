@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import Navbar from "../components/Navbar";
@@ -8,7 +8,13 @@ import { useAuth } from "../context/useAuth";
 
 function Login() {
   const navigate = useNavigate();
-  const { setAuthenticatedUser } = useAuth();
+  const { setAuthenticatedUser, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/profile", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const [form, setForm] = useState({
     email: "",

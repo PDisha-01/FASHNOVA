@@ -1,8 +1,110 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import Navbar from "../components/Navbar";
+import { generateStudioDesign } from "../services/api";
 
-const API_URL = "http://localhost:5000";
+const STUDIO_PRESETS = [
+  {
+    label: "Crimson Couture Gown",
+    prompt: "Haute couture sculptural evening gown in crimson and rose silk with architectural shoulder drapery",
+    garment: "Sculptural Silk Gown",
+    category: "Eveningwear",
+    aesthetic: "Haute Couture",
+    season: "Fall / Winter",
+    colors: "Crimson, Dusty Rose, Pearl, Noir",
+    pattern: "Solid Micro-Sheen",
+    fabric: "Silk Charmeuse & Organza",
+  },
+  {
+    label: "Ivory Minimalist Blazer",
+    prompt: "Oversized ivory structured wool blazer with architectural peak lapels and tailored minimal silhouette",
+    garment: "Structured Wool Blazer",
+    category: "Tailoring",
+    aesthetic: "Minimalist Architectural",
+    season: "Autumn / Winter",
+    colors: "Pristine Ivory, Warm Sand, Espresso",
+    pattern: "Solid Weave",
+    fabric: "Double-Faced Melton Wool",
+  },
+  {
+    label: "Liquid Metallic Trench",
+    prompt: "Avant-garde metallic silver and black liquid trench coat with architectural storm flaps and high futuristic collar",
+    garment: "Liquid Metallic Trench Coat",
+    category: "Outerwear",
+    aesthetic: "Avant-Garde Neo-Luxury",
+    season: "Spring / Forward",
+    colors: "Metallic Silver, Pitch Noir, Chrome",
+    pattern: "Liquid Reflective",
+    fabric: "Liquid Metallic Membrane & Nylon",
+  },
+  {
+    label: "Emerald Silk Satin Gown",
+    prompt: "Emerald green silk satin couture evening gown with sculptural asymmetrical one-shoulder drapery",
+    garment: "Asymmetrical Draped Gown",
+    category: "Eveningwear",
+    aesthetic: "Haute Couture Red Carpet",
+    season: "Spring / Summer",
+    colors: "Deep Emerald, Forest Satin, Jade Mist",
+    pattern: "Solid Satin Luster",
+    fabric: "Italian Silk Satin",
+  },
+  {
+    label: "Monochrome Power Suit",
+    prompt: "Monochrome double-breasted tailored pantsuit with contrasting chalk-white peak lapels and razor-pleated trousers",
+    garment: "Double-Breasted Power Suit",
+    category: "Tailoring",
+    aesthetic: "Modernist Sharp Suiting",
+    season: "All-Season",
+    colors: "Onyx Black, Crisp Chalk, Slate",
+    pattern: "Matte Fine Suiting Weave",
+    fabric: "Super 140s Virgin Wool",
+  },
+  {
+    label: "Burgundy Velvet Corset",
+    prompt: "Avant-garde structured burgundy velvet corset with sharp peplum waist flared over high-rise bespoke tailored trousers",
+    garment: "Structured Peplum Corset",
+    category: "Corsetry",
+    aesthetic: "Architectural Corsetry",
+    season: "Winter Couture",
+    colors: "Burgundy Velvet, Royal Rose, Black Caviar",
+    pattern: "Deep-Pile Velvet",
+    fabric: "Silk-Cotton Velvet & Featherweight Boning",
+  },
+  {
+    label: "Camel Wool Trench",
+    prompt: "Architectural oversized camel wool trench coat with statement storm flaps and wide cinched belt",
+    garment: "Oversized Wool Trench",
+    category: "Outerwear",
+    aesthetic: "Quiet Luxury Outerwear",
+    season: "Winter",
+    colors: "Rich Camel, Golden Ochre, Dark Espresso",
+    pattern: "Brushed Cashmere Soft Finish",
+    fabric: "Mongolian Camel Hair & Cashmere",
+  },
+  {
+    label: "Cyber-Tailored Streetwear",
+    prompt: "Futuristic technical cyber-tailored jacket with high sculpted funnel collar, angled storm flap, and reflective detailing",
+    garment: "Cyber-Tailored Technical Jacket",
+    category: "Streetwear",
+    aesthetic: "Avant-Garde Neo-Streetwear",
+    season: "All-Season",
+    colors: "Carbon Black, Industrial Steel, Chrome",
+    pattern: "Technical Geometric Panel",
+    fabric: "Bonded Technical Nylon & Metal",
+  },
+  {
+    label: "Plissé Champagne Resort",
+    prompt: "Micro-pleated plissé champagne silk maxi dress with fluid drape and elegant sculptural neckline",
+    garment: "Plissé Silk Maxi Dress",
+    category: "Resort",
+    aesthetic: "Contemporary Luxury Resort",
+    season: "High Summer",
+    colors: "Champagne Plissé, Golden Sand, Umber",
+    pattern: "Accordion Micro-Plissé",
+    fabric: "100% Micro-Pleated Silk Chiffon",
+  },
+];
 
 function Studio() {
   const [prompt, setPrompt] = useState("");
@@ -19,11 +121,23 @@ function Studio() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  const applyPreset = (preset) => {
+    setPrompt(preset.prompt);
+    setGarment(preset.garment);
+    setCategory(preset.category);
+    setAesthetic(preset.aesthetic);
+    setSeason(preset.season);
+    setColors(preset.colors);
+    setPattern(preset.pattern);
+    setFabric(preset.fabric);
+    setError("");
+  };
+
   const handleGenerate = async (event) => {
     event.preventDefault();
 
     if (!prompt.trim()) {
-      setError("Please enter a creative direction before generating.");
+      setError("Please enter a creative direction or select an editorial preset before generating.");
       return;
     }
 
@@ -37,49 +151,33 @@ function Studio() {
       .filter(Boolean);
 
     try {
-      const response = await fetch(`${API_URL}/api/studio/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const data = await generateStudioDesign({
+        generation_type: generationType,
+        prompt: prompt.trim(),
+
+        fashion_context: {
+          garment: garment.trim() || undefined,
+          category: category.trim() || undefined,
+          aesthetic: aesthetic.trim() || undefined,
+          season: season.trim() || undefined,
+          colors: colorList,
+          pattern: pattern.trim() || undefined,
+          fabric: fabric.trim() || undefined,
         },
-        body: JSON.stringify({
-          generation_type: generationType,
-          prompt: prompt.trim(),
 
-          fashion_context: {
-            garment: garment.trim() || undefined,
-            category: category.trim() || undefined,
-            aesthetic: aesthetic.trim() || undefined,
-            season: season.trim() || undefined,
-            colors: colorList,
-            pattern: pattern.trim() || undefined,
-            fabric: fabric.trim() || undefined,
-          },
+        trend_context: {
+          enabled: false,
+          trends: [],
+        },
 
-          trend_context: {
-            enabled: false,
-            trends: [],
-          },
+        vision_context: {
+          enabled: false,
+          attributes: {},
+        },
 
-          vision_context: {
-            enabled: false,
-            attributes: {},
-          },
-
-          aspect_ratio: "3:4",
-          image_size: "1K",
-        }),
+        aspect_ratio: "3:4",
+        image_size: "1K",
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.detail ||
-            data?.message ||
-            "Studio generation failed."
-        );
-      }
 
       if (data.status !== "success") {
         throw new Error(
@@ -98,34 +196,16 @@ function Studio() {
     }
   };
 
+  // Resolve displayable image from base64 data or image URL
+  const displayImage = result?.image_data
+    ? (result.image_data.startsWith("data:") || result.image_data.startsWith("http")
+        ? result.image_data
+        : `data:image/jpeg;base64,${result.image_data}`)
+    : result?.image_url || null;
+
   return (
     <div className="studio-page">
-      <header className="navbar studio-navbar">
-        <Link to="/" className="brand">
-          <img
-            src="/logo.png"
-            alt="FASHNOVA logo"
-            className="brand-logo"
-          />
-
-          <div className="brand-text">
-            <span>FASHNOVA</span>
-            <small>FASHION MEETS INTELLIGENCE</small>
-          </div>
-        </Link>
-
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/vision">Vision</Link>
-          <Link to="/trends">Trends</Link>
-          <Link to="/studio">Studio</Link>
-           <Link to="/style-engine">Style Engine</Link>
-        </nav>
-
-        <Link to="/profile" className="profile-button">
-          Profile
-        </Link>
-      </header>
+      <Navbar />
 
       <main className="studio-main">
         <section className="studio-hero">
@@ -141,7 +221,7 @@ function Studio() {
             </h1>
 
             <p className="studio-description">
-              Turn creative direction into fashion design
+              Turn creative direction into high-fashion design
               concepts using FASHNOVA's generative intelligence.
             </p>
           </div>
@@ -151,6 +231,26 @@ function Studio() {
             <p>
               Concept → Design → Variation → Pattern
             </p>
+          </div>
+        </section>
+
+        {/* Editorial Presets */}
+        <section className="studio-presets-section">
+          <div className="studio-presets-header">
+            <span>EDITORIAL INSPIRATION & SILHOUETTES</span>
+            <small>SELECT A DIRECTION TO POPULATE</small>
+          </div>
+          <div className="studio-presets-chips">
+            {STUDIO_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                className="studio-preset-chip"
+                onClick={() => applyPreset(preset)}
+              >
+                + {preset.label}
+              </button>
+            ))}
           </div>
         </section>
 
@@ -180,7 +280,7 @@ function Studio() {
                   onChange={(event) =>
                     setPrompt(event.target.value)
                   }
-                  placeholder="Describe the fashion design you want to create..."
+                  placeholder="Describe the fashion design you want to create (e.g. Sculptural crimson evening gown in silk charmeuse, or architectural ivory tailored blazer)..."
                   rows="6"
                 />
               </label>
@@ -224,7 +324,7 @@ function Studio() {
                     onChange={(event) =>
                       setGarment(event.target.value)
                     }
-                    placeholder="e.g. summer dress"
+                    placeholder="e.g. evening gown"
                   />
                 </label>
 
@@ -235,7 +335,7 @@ function Studio() {
                     onChange={(event) =>
                       setCategory(event.target.value)
                     }
-                    placeholder="e.g. womenswear"
+                    placeholder="e.g. haute couture"
                   />
                 </label>
 
@@ -246,7 +346,7 @@ function Studio() {
                     onChange={(event) =>
                       setAesthetic(event.target.value)
                     }
-                    placeholder="e.g. contemporary"
+                    placeholder="e.g. contemporary luxury"
                   />
                 </label>
 
@@ -257,7 +357,7 @@ function Studio() {
                     onChange={(event) =>
                       setSeason(event.target.value)
                     }
-                    placeholder="e.g. summer"
+                    placeholder="e.g. fall / winter"
                   />
                 </label>
 
@@ -268,7 +368,7 @@ function Studio() {
                     onChange={(event) =>
                       setColors(event.target.value)
                     }
-                    placeholder="sage green, ivory"
+                    placeholder="e.g. crimson, dusty rose, pearl"
                   />
                 </label>
 
@@ -279,7 +379,7 @@ function Studio() {
                     onChange={(event) =>
                       setPattern(event.target.value)
                     }
-                    placeholder="e.g. floral"
+                    placeholder="e.g. micro-sheen"
                   />
                 </label>
 
@@ -290,26 +390,24 @@ function Studio() {
                     onChange={(event) =>
                       setFabric(event.target.value)
                     }
-                    placeholder="e.g. lightweight cotton"
+                    placeholder="e.g. silk charmeuse"
                   />
                 </label>
               </div>
             </div>
 
             {error && (
-              <div className="studio-error">
-                {error}
-              </div>
+              <p className="studio-error">{error}</p>
             )}
 
             <button
               type="submit"
-              className="studio-generate-button"
+              className="studio-submit-button"
               disabled={loading}
             >
               {loading
-                ? "Generating..."
-                : "Generate Fashion Design"}
+                ? "Synthesizing Fashion Output..."
+                : "Generate Fashion Design ↗"}
             </button>
           </form>
         </section>
@@ -324,7 +422,7 @@ function Studio() {
             </div>
 
             <p>
-              Your generated fashion concept will appear here.
+              Your generated fashion concept and high-resolution visual model output.
             </p>
           </div>
 
@@ -355,21 +453,32 @@ function Studio() {
                     </span>
 
                     <h3>
-                      {result.generation_type}
+                      {result.metadata?.garment || result.generation_type}
                     </h3>
                   </div>
 
                   <span className="studio-result-model">
-                    {result.model || "Gemini"}
+                    {result.model || "FASHNOVA-Studio"}
                   </span>
                 </div>
 
-                {result.image_data ? (
+                {displayImage ? (
                   <div className="studio-generated-image">
                     <img
-                      src={`data:image/png;base64,${result.image_data}`}
-                      alt="Generated fashion design"
+                      src={displayImage}
+                      alt={result.metadata?.garment || "Generated fashion design"}
                     />
+                    <div className="studio-image-overlay-actions">
+                      <a
+                        href={displayImage}
+                        download={`fashnova-design-${Date.now()}.jpg`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="studio-download-btn"
+                      >
+                        DOWNLOAD HIGH-RES CONCEPT ↗
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <div className="studio-result-placeholder">
@@ -379,6 +488,62 @@ function Studio() {
                       successfully, but no displayable image
                       is available yet.
                     </p>
+                  </div>
+                )}
+
+                {/* Rich Fashion Intelligence Metadata Card */}
+                {result.metadata && (
+                  <div className="studio-concept-intel">
+                    <div className="studio-intel-grid">
+                      {result.metadata.silhouette && (
+                        <div className="studio-intel-item">
+                          <span>SILHOUETTE</span>
+                          <strong>{result.metadata.silhouette}</strong>
+                        </div>
+                      )}
+                      {result.metadata.aesthetic && (
+                        <div className="studio-intel-item">
+                          <span>AESTHETIC</span>
+                          <strong>{result.metadata.aesthetic}</strong>
+                        </div>
+                      )}
+                      {result.metadata.fabric && (
+                        <div className="studio-intel-item">
+                          <span>FABRIC</span>
+                          <strong>{result.metadata.fabric}</strong>
+                        </div>
+                      )}
+                      {result.metadata.pattern && (
+                        <div className="studio-intel-item">
+                          <span>PATTERN</span>
+                          <strong>{result.metadata.pattern}</strong>
+                        </div>
+                      )}
+                    </div>
+
+                    {result.metadata.palette && result.metadata.palette.length > 0 && (
+                      <div className="studio-intel-palette">
+                        <span>COLOR HARMONY</span>
+                        <div className="studio-palette-chips">
+                          {result.metadata.palette.map((item, idx) => (
+                            <div key={idx} className="studio-palette-chip">
+                              <span
+                                className="studio-swatch-dot"
+                                style={{ backgroundColor: item.hex }}
+                              ></span>
+                              <small>{item.name} ({item.hex})</small>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.metadata.design_notes && (
+                      <div className="studio-intel-notes">
+                        <span>EDITORIAL ANALYSIS</span>
+                        <p>{result.metadata.design_notes}</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -402,9 +567,9 @@ function Studio() {
                 </h3>
 
                 <p>
-                  Describe a design above and Studio will
-                  transform your direction into a generative
-                  fashion output.
+                  Describe a design above or pick an editorial preset,
+                  and Studio will transform your direction into a luxury
+                  fashion visual output.
                 </p>
               </div>
             )}
@@ -431,7 +596,7 @@ function Studio() {
               <span>01</span>
               <h3>Trend-aware</h3>
               <p>
-                Future Studio generations can be conditioned
+                Studio generations can be conditioned
                 by signals discovered by the Trends engine.
               </p>
             </article>
@@ -440,7 +605,7 @@ function Studio() {
               <span>02</span>
               <h3>Vision-aware</h3>
               <p>
-                Vision attributes can provide structured
+                Vision attributes provide structured
                 reference information for new designs.
               </p>
             </article>
@@ -449,8 +614,8 @@ function Studio() {
               <span>03</span>
               <h3>Style Engine</h3>
               <p>
-                Generated concepts can eventually contribute
-                to personalized recommendations.
+                Generated concepts feed directly
+                into personalized recommendations.
               </p>
             </article>
           </div>

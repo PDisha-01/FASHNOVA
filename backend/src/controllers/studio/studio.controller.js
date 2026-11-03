@@ -2,7 +2,7 @@ import { generateStudio as runStudioGeneration } from "../../services/studio/stu
 
 export const generateStudio = async (req, res, next) => {
   try {
-    const result = await runStudioGeneration(req.body);
+    const result = await runStudioGeneration(req.body, req.user);
 
     return res.status(200).json(result);
   } catch (error) {

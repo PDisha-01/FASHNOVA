@@ -28,3 +28,14 @@ export async function login(req, res, next) {
     next(error);
   }
 }
+
+export async function getMe(req, res, next) {
+  try {
+    res.status(200).json({
+      success: true,
+      data: req.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
