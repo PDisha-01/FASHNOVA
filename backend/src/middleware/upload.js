@@ -1,39 +1,23 @@
-import multer from "multer";
+﻿import multer from "multer";
+import fs from "fs";
 import path from "path";
-import crypto from "crypto";
+
+const uploadDir = path.resolve(process.cwd(), "uploads", "vision");
+
+fs.mkdirSync(uploadDir, { recursive: true });
 
 const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/vision");
+    cb(null, uploadDir);
   },
-
   filename: (req, file, cb) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-    const uniqueName = `${crypto.randomUUID()}${extension}`;
-
+    const uniqueName = `${crypto.randomUUID()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
   },
 });
 
-const allowedMimeTypes = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-
-const fileFilter = (req, file, cb) => {
-  if (!allowedMimeTypes.has(file.mimetype)) {
-    return cb(
-      new Error("Only JPEG, PNG, and WebP images are allowed.")
-    );
-  }
-
-  cb(null, true);
-};
-
 export const uploadVisionImage = multer({
   storage: uploadStorage,
-  fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024,
   },
