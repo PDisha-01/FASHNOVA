@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "../App.css";
 import Navbar from "../components/Navbar";
 import { generateStudioDesign } from "../services/api";
@@ -121,6 +121,18 @@ function Studio() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.presetPrompt) {
+      setPrompt(location.state.presetPrompt);
+      if (location.state.garment) setGarment(location.state.garment);
+      if (location.state.category) setCategory(location.state.category);
+      if (location.state.aesthetic) setAesthetic(location.state.aesthetic);
+      setError("");
+    }
+  }, [location.state]);
+
   const applyPreset = (preset) => {
     setPrompt(preset.prompt);
     setGarment(preset.garment);
@@ -137,7 +149,7 @@ function Studio() {
     event.preventDefault();
 
     if (!prompt.trim()) {
-      setError("Please enter a creative direction or select an editorial preset before generating.");
+      setError("Please describe the attire or fashion design you want to create.");
       return;
     }
 
@@ -237,8 +249,8 @@ function Studio() {
         {/* Editorial Presets */}
         <section className="studio-presets-section">
           <div className="studio-presets-header">
-            <span>EDITORIAL INSPIRATION & SILHOUETTES</span>
-            <small>SELECT A DIRECTION TO POPULATE</small>
+            <span>PROMPT INSPIRATION EXAMPLES</span>
+            <small>CLICK TO FILL OR TYPE YOUR OWN ATTENTION-GRABBING ATTIRE BELOW</small>
           </div>
           <div className="studio-presets-chips">
             {STUDIO_PRESETS.map((preset) => (
@@ -248,7 +260,7 @@ function Studio() {
                 className="studio-preset-chip"
                 onClick={() => applyPreset(preset)}
               >
-                + {preset.label}
+                ✦ {preset.label}
               </button>
             ))}
           </div>
@@ -262,8 +274,8 @@ function Studio() {
             </div>
 
             <p>
-              Define the visual language of the design you want
-              Studio to generate.
+              Describe any attire, outfit, or garment you want to design.
+              Studio uses generative AI to design your exact custom attire.
             </p>
           </div>
 
@@ -273,14 +285,14 @@ function Studio() {
           >
             <div className="studio-generator-main">
               <label className="studio-field studio-prompt-field">
-                <span>Creative prompt</span>
+                <span>Custom design prompt</span>
 
                 <textarea
                   value={prompt}
                   onChange={(event) =>
                     setPrompt(event.target.value)
                   }
-                  placeholder="Describe the fashion design you want to create (e.g. Sculptural crimson evening gown in silk charmeuse, or architectural ivory tailored blazer)..."
+                  placeholder="Describe any attire or fashion design you want to create (e.g., A royal blue silk saree with gold embroidery, or a cyber punk neon green leather jacket with spikes)..."
                   rows="6"
                 />
               </label>
@@ -406,8 +418,8 @@ function Studio() {
               disabled={loading}
             >
               {loading
-                ? "Synthesizing Fashion Output..."
-                : "Generate Fashion Design ↗"}
+                ? "Generating Custom Attire with AI..."
+                : "Generate Custom Attire ↗"}
             </button>
           </form>
         </section>
@@ -418,11 +430,11 @@ function Studio() {
               <p className="studio-section-label">
                 02 · OUTPUT
               </p>
-              <h2>Generated Design</h2>
+              <h2>Custom Design Output</h2>
             </div>
 
             <p>
-              Your generated fashion concept and high-resolution visual model output.
+              Your custom fashion attire generated in real-time from your exact prompt.
             </p>
           </div>
 
@@ -430,18 +442,17 @@ function Studio() {
             {loading ? (
               <div className="studio-output-empty">
                 <span className="studio-output-index">
-                  GENERATING
+                  GENERATING ATTIRE
                 </span>
 
                 <h3>
-                  Studio is creating
+                  Studio is designing
                   <br />
-                  your design.
+                  your custom attire.
                 </h3>
 
                 <p>
-                  The request is being processed by the
-                  FASHNOVA generative pipeline.
+                  Generating photorealistic fashion design specifically matching: "{prompt}"
                 </p>
               </div>
             ) : result ? (
@@ -557,19 +568,18 @@ function Studio() {
             ) : (
               <div className="studio-output-empty">
                 <span className="studio-output-index">
-                  AWAITING DIRECTION
+                  AWAITING CREATIVE DIRECTION
                 </span>
 
                 <h3>
-                  Your next
+                  Design any
                   <br />
-                  fashion idea.
+                  attire you imagine.
                 </h3>
 
                 <p>
-                  Describe a design above or pick an editorial preset,
-                  and Studio will transform your direction into a luxury
-                  fashion visual output.
+                  Type any custom attire, outfit, or silhouette above. Studio will generate
+                  your exact fashion design in real-time.
                 </p>
               </div>
             )}

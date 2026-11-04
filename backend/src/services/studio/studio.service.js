@@ -10,333 +10,362 @@ const __dirname = path.dirname(__filename);
 
 const STUDIO_ML_URL = env.STUDIO_ML_URL || "http://127.0.0.1:8003";
 
-// High-Fashion Concept Intelligence Library
-const FASHION_CONCEPTS_CATALOG = [
-  {
-    id: "couture-crimson-gown",
-    keywords: ["crimson", "red", "rose", "gown", "evening", "couture", "silk", "charmeuse", "drape", "column", "fluted", "formal", "party", "ball"],
-    garment: "Sculptural Crimson & Rose Silk Gown",
-    aesthetic: "Haute Couture Eveningwear",
-    silhouette: "Sculptural Fluted Column",
-    fabric: "Double-Faced Silk Charmeuse & Organza",
-    colors: ["#6e1b30", "#b94361", "#f3ded8", "#1c0b13"],
-    colorNames: "Wine Crimson, Dusty Rose, Pale Pearl, Noir",
-    palette: [
-      { name: "Wine Crimson", hex: "#6e1b30" },
-      { name: "Dusty Rose", hex: "#b94361" },
-      { name: "Pale Pearl", hex: "#f3ded8" },
-      { name: "Noir", hex: "#1c0b13" },
-    ],
-    pattern: "Solid Micro-Sheen",
-    imageFile: "runway-couture.jpg",
-    imageUrl: "/fashion/runway-couture.jpg",
-    designNotes: "Architectural fluted column with asymmetric draped shoulder folds, constructed from double-faced silk charmeuse with hand-finished organza accents.",
-  },
-  {
-    id: "tailoring-ivory-blazer",
-    keywords: ["ivory", "white", "blazer", "suit", "jacket", "tailoring", "minimal", "minimalist", "wool", "structured", "lapel", "power", "double-breasted", "cream"],
-    garment: "Architectural Sculpted Ivory Blazer",
-    aesthetic: "Minimalist Architectural Tailoring",
-    silhouette: "Boxy Double-Breasted Structure",
-    fabric: "Double-Faced Melton Wool & Cashmere",
-    colors: ["#f8f6f0", "#d8cfc4", "#4b3f3b", "#1e1b18"],
-    colorNames: "Pristine Ivory, Warm Sand, Espresso, Noir",
-    palette: [
-      { name: "Pristine Ivory", hex: "#f8f6f0" },
-      { name: "Warm Sand", hex: "#d8cfc4" },
-      { name: "Espresso", hex: "#4b3f3b" },
-      { name: "Noir", hex: "#1e1b18" },
-    ],
-    pattern: "Clean Solid Wool Weave",
-    imageFile: "runway-tailoring.jpg",
-    imageUrl: "/fashion/runway-tailoring.jpg",
-    designNotes: "Razor-sharp tailored blazer featuring peak architectural lapels, dropped padded shoulders, and hidden closure in premium Italian wool.",
-  },
-  {
-    id: "avantgarde-metallic-trench",
-    keywords: ["metallic", "silver", "trench", "coat", "avant-garde", "futuristic", "outerwear", "noir", "duster", "liquid", "cyber", "storm", "shine"],
-    garment: "Liquid Metallic Noir Architectural Trench",
-    aesthetic: "Avant-Garde Neo-Luxury",
-    silhouette: "Storm-Flap Oversized Duster",
-    fabric: "Treated Liquid Metallic Membrane & Nylon",
-    colors: ["#0e0f14", "#9ea5b0", "#2b2e3b", "#e4e7ec"],
-    colorNames: "Pitch Noir, Metallic Silver, Deep Slate, Chrome",
-    palette: [
-      { name: "Pitch Noir", hex: "#0e0f14" },
-      { name: "Metallic Silver", hex: "#9ea5b0" },
-      { name: "Deep Slate", hex: "#2b2e3b" },
-      { name: "Chrome", hex: "#e4e7ec" },
-    ],
-    pattern: "Reflective High-Sheen",
-    imageFile: "runway-avantgarde.jpg",
-    imageUrl: "/fashion/runway-avantgarde.jpg",
-    designNotes: "Futuristic oversized trench engineered with liquid metallic sheen, dramatic oversized storm flaps, and industrial high-collar throat latch.",
-  },
-  {
-    id: "resort-champagne-maxi",
-    keywords: ["champagne", "gold", "resort", "plisse", "pleated", "dress", "summer", "fluid", "maxi", "draped", "chiffon", "boho", "bohemian", "vacation"],
-    garment: "Plissé Champagne Silk Maxi Dress",
-    aesthetic: "Contemporary Luxury Resort",
-    silhouette: "Fluid Micro-Pleated Plissé Column",
-    fabric: "100% Micro-Pleated Silk Chiffon",
-    colors: ["#e9dec7", "#cbb692", "#695741", "#302720"],
-    colorNames: "Champagne Plissé, Golden Sand, Raw Umber, Bark",
-    palette: [
-      { name: "Champagne Plissé", hex: "#e9dec7" },
-      { name: "Golden Sand", hex: "#cbb692" },
-      { name: "Raw Umber", hex: "#695741" },
-      { name: "Warm Bark", hex: "#302720" },
-    ],
-    pattern: "Accordion Micro-Plissé",
-    imageFile: "runway-resort.jpg",
-    imageUrl: "/fashion/runway-resort.jpg",
-    designNotes: "Sculptural tiered maxi dress engineered with permanent plissé micro-pleating, creating fluid liquid motion with every step in golden-hour hues.",
-  },
-  {
-    id: "couture-emerald-gown",
-    keywords: ["emerald", "green", "satin", "gown", "asymmetric", "evening", "drape", "luxury", "silk", "ball", "gala", "slit"],
-    garment: "Emerald Green Satin Asymmetrical Draped Gown",
-    aesthetic: "Haute Couture Red Carpet",
-    silhouette: "Asymmetrical Draped Column",
-    fabric: "Heavy Italian Silk Satin & Crêpe de Chine",
-    colors: ["#0f432a", "#1b6b44", "#a3d3ba", "#061a10"],
-    colorNames: "Deep Emerald, Forest Satin, Jade Mist, Obsidian",
-    palette: [
-      { name: "Deep Emerald", hex: "#0f432a" },
-      { name: "Forest Satin", hex: "#1b6b44" },
-      { name: "Jade Mist", hex: "#a3d3ba" },
-      { name: "Obsidian", hex: "#061a10" },
-    ],
-    pattern: "Liquid Satin Luster",
-    imageFile: "studio-dress-emerald.jpg",
-    imageUrl: "/fashion/studio-dress-emerald.jpg",
-    designNotes: "Rich emerald green silk gown featuring sculptural one-shoulder asymmetrical drapery cascading into a dramatic train.",
-  },
-  {
-    id: "couture-burgundy-corset",
-    keywords: ["corset", "peplum", "velvet", "burgundy", "wine", "waist", "sculptural", "trousers", "corsetry", "victorian", "bustier"],
-    garment: "Structured Burgundy Velvet Peplum Corset",
-    aesthetic: "Avant-Garde Architectural Corsetry",
-    silhouette: "Sculptural Peplum Hourglass",
-    fabric: "Silk-Cotton Velvet & Featherweight Boning",
-    colors: ["#4a1525", "#78223c", "#121214", "#d4af37"],
-    colorNames: "Burgundy Velvet, Royal Rose, Black Caviar, Antique Gold",
-    palette: [
-      { name: "Burgundy Velvet", hex: "#4a1525" },
-      { name: "Royal Rose", hex: "#78223c" },
-      { name: "Black Caviar", hex: "#121214" },
-      { name: "Antique Gold", hex: "#d4af37" },
-    ],
-    pattern: "Rich Deep-Pile Texture",
-    imageFile: "studio-corset-couture.jpg",
-    imageUrl: "/fashion/studio-corset-couture.jpg",
-    designNotes: "Architectural structured velvet corset with sharp peplum waist flared over high-rise bespoke tailored trousers.",
-  },
-  {
-    id: "tailoring-monochrome-suit",
-    keywords: ["suit", "monochrome", "black", "pantsuit", "trousers", "lapel", "contrast", "sharp", "formal", "office", "executive", "power suit"],
-    garment: "Monochrome Double-Breasted Power Suit",
-    aesthetic: "Modernist Sharp Suiting",
-    silhouette: "Double-Breasted Sculptural Tailoring",
-    fabric: "Super 140s Virgin Wool & Silk Faille",
-    colors: ["#111215", "#f5f5f7", "#3a3c42", "#8f9199"],
-    colorNames: "Onyx Black, Crisp Chalk, Charcoal, Slate",
-    palette: [
-      { name: "Onyx Black", hex: "#111215" },
-      { name: "Crisp Chalk", hex: "#f5f5f7" },
-      { name: "Charcoal", hex: "#3a3c42" },
-      { name: "Slate", hex: "#8f9199" },
-    ],
-    pattern: "Matte Fine Suiting Weave",
-    imageFile: "studio-suit-monochrome.jpg",
-    imageUrl: "/fashion/studio-suit-monochrome.jpg",
-    designNotes: "Onyx black double-breasted jacket with contrasting chalk-white peak lapels and razor-pleated straight-leg trousers.",
-  },
-  {
-    id: "outerwear-camel-trench",
-    keywords: ["camel", "coat", "trench", "oversized", "winter", "wool", "belt", "tan", "beige", "storm", "luxury", "cashmere", "fall"],
-    garment: "Architectural Oversized Camel Wool Trench",
-    aesthetic: "Quiet Luxury Outerwear",
-    silhouette: "Voluminous Architectural Wrap Duster",
-    fabric: "100% Mongolian Camel Hair & Cashmere",
-    colors: ["#9a6b42", "#c49a6c", "#442e1d", "#f2e4d0"],
-    colorNames: "Rich Camel, Golden Ochre, Dark Espresso, Cream",
-    palette: [
-      { name: "Rich Camel", hex: "#9a6b42" },
-      { name: "Golden Ochre", hex: "#c49a6c" },
-      { name: "Dark Espresso", hex: "#442e1d" },
-      { name: "Cream", hex: "#f2e4d0" },
-    ],
-    pattern: "Brushed Cashmere Soft Finish",
-    imageFile: "studio-trench-camel.jpg",
-    imageUrl: "/fashion/studio-trench-camel.jpg",
-    designNotes: "Expansive tailored trench coat featuring wide statement lapels, a cinched wide self-belt, and dramatic raglan sleeves.",
-  },
-  {
-    id: "streetwear-cyber-noir",
-    keywords: ["streetwear", "cyber", "jacket", "techwear", "noir", "black", "metallic", "bomber", "hoodie", "modern", "cargo", "future", "urban"],
-    garment: "Futuristic Technical Cyber-Tailored Jacket",
-    aesthetic: "Avant-Garde Neo-Streetwear",
-    silhouette: "Modular Technical Cropped Outerwear",
-    fabric: "Bonded Technical Nylon & Matte Liquid Metal",
-    colors: ["#16171b", "#70737d", "#c5c8cf", "#2c2d33"],
-    colorNames: "Carbon Black, Industrial Steel, Chrome, Dark Slate",
-    palette: [
-      { name: "Carbon Black", hex: "#16171b" },
-      { name: "Industrial Steel", hex: "#70737d" },
-      { name: "Chrome", hex: "#c5c8cf" },
-      { name: "Dark Slate", hex: "#2c2d33" },
-    ],
-    pattern: "Technical Geometric Panel",
-    imageFile: "studio-streetwear-cyber.jpg",
-    imageUrl: "/fashion/studio-streetwear-cyber.jpg",
-    designNotes: "Modular cyber-tailored jacket with high sculpted funnel collar, angled magnetic storm flap, and reflective piping.",
-  },
-  {
-    id: "editorial-hero-couture",
-    keywords: ["gown", "couture", "fashion", "dress", "editorial", "avant-garde", "ivory", "burgundy", "vogue", "model", "sculptural"],
-    garment: "Avant-Garde Architectural Ivory & Burgundy Couture Gown",
-    aesthetic: "High Fashion Editorial Cover",
-    silhouette: "Sculptural Avant-Garde Hourglass",
-    fabric: "Structured French Velvet & Duchesse Silk",
-    colors: ["#3b1027", "#f7f3ed", "#a9546c", "#180610"],
-    colorNames: "Deep Burgundy, Ivory Cream, Muted Rose, Midnight Wine",
-    palette: [
-      { name: "Deep Burgundy", hex: "#3b1027" },
-      { name: "Ivory Cream", hex: "#f7f3ed" },
-      { name: "Muted Rose", hex: "#a9546c" },
-      { name: "Midnight Wine", hex: "#180610" },
-    ],
-    pattern: "Architectural Contrast Blocking",
-    imageFile: "hero-fashion.jpg",
-    imageUrl: "/fashion/hero-fashion.jpg",
-    designNotes: "Vogue-cover standard haute couture gown uniting structured burgundy velvet bodice with cascading architectural ivory duchesse silk.",
-  },
-];
+/**
+ * Dynamically extract rich fashion intelligence metadata from the user's custom prompt
+ */
+function extractFashionMetadataFromPrompt(promptText = "", fashionContext = {}) {
+  const text = promptText.toLowerCase();
 
-// Helper: Match best concept from catalog based on prompt text & parameters
-function matchFashionConcept(promptText = "", fashionContext = {}) {
-  const normalized = [
-    promptText,
-    fashionContext.garment || "",
-    fashionContext.category || "",
-    fashionContext.aesthetic || "",
-    fashionContext.season || "",
-    fashionContext.fabric || "",
-    fashionContext.pattern || "",
-    ...(fashionContext.colors || []),
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  let bestMatch = FASHION_CONCEPTS_CATALOG[0];
-  let highestScore = -1;
-
-  for (const concept of FASHION_CONCEPTS_CATALOG) {
-    let score = 0;
-    for (const keyword of concept.keywords) {
-      if (normalized.includes(keyword)) {
-        score += 2;
-      }
-    }
-
-    // Direct garment or aesthetic boost
-    if (concept.garment.toLowerCase().split(" ").some((w) => w.length > 3 && normalized.includes(w))) {
-      score += 3;
-    }
-    if (concept.aesthetic.toLowerCase().split(" ").some((w) => w.length > 3 && normalized.includes(w))) {
-      score += 2;
-    }
-
-    if (score > highestScore) {
-      highestScore = score;
-      bestMatch = concept;
-    }
-  }
-
-  return bestMatch;
-}
-
-// Helper: Load image file and return base64
-function loadImageAsBase64(imageFileName) {
-  try {
-    const candidates = [
-      path.resolve(__dirname, "../../../../frontend/public/fashion", imageFileName),
-      path.resolve(__dirname, "../../../uploads/studio", imageFileName),
-      path.resolve(process.cwd(), "frontend/public/fashion", imageFileName),
-      path.resolve(process.cwd(), "backend/uploads/studio", imageFileName),
+  // 1. Detect Garment
+  let garment = fashionContext.garment || fashionContext.category || "";
+  if (!garment) {
+    const garmentKeywords = [
+      "lehenga", "saree", "sari", "gown", "dress", "sundress", "blazer", "suit",
+      "jacket", "trench coat", "trench", "coat", "corset", "bustier", "skirt",
+      "pantsuit", "trousers", "pants", "hoodie", "bomber", "cardigan", "sweater",
+      "kaftan", "jumpsuit", "kimono", "tunic", "vest", "duster", "cape", "cloak",
+      "sherwani", "kurta", "anarkali", "shacket", "parka", "poncho", "bodysuit"
     ];
-
-    for (const candidate of candidates) {
-      if (fs.existsSync(candidate)) {
-        const fileBuffer = fs.readFileSync(candidate);
-        return fileBuffer.toString("base64");
+    for (const kw of garmentKeywords) {
+      if (text.includes(kw)) {
+        garment = kw.charAt(0).toUpperCase() + kw.slice(1);
+        break;
       }
     }
-  } catch (err) {
-    console.warn("Could not read image file to base64:", err.message);
+    if (!garment) {
+      garment = "Bespoke Fashion Attire";
+    }
   }
-  return null;
+
+  // 2. Detect Aesthetic
+  let aesthetic = fashionContext.aesthetic || "";
+  if (!aesthetic) {
+    const aestheticKeywords = [
+      ["haute couture", "Haute Couture"],
+      ["couture", "Contemporary Couture"],
+      ["streetwear", "Urban Luxury Streetwear"],
+      ["minimalist", "Minimalist Modern"],
+      ["minimal", "Clean Minimalist"],
+      ["cyberpunk", "Cyberpunk Avant-Garde"],
+      ["vintage", "Vintage Heritage"],
+      ["retro", "Retro Contemporary"],
+      ["boho", "Bohemian Luxury"],
+      ["bohemian", "Bohemian Chic"],
+      ["resort", "Luxury Resort"],
+      ["traditional", "Traditional Heritage"],
+      ["bridal", "Bridal Couture"],
+      ["gothic", "Dark Romantic / Gothic"],
+      ["avant-garde", "Avant-Garde High Fashion"],
+      ["y2k", "Y2K Futuristic"],
+      ["quiet luxury", "Quiet Luxury / Old Money"],
+      ["preppy", "Tailored Preppy Chic"],
+      ["punk", "Edgy Punk Couture"],
+      ["futuristic", "Futuristic Architectural"]
+    ];
+    for (const [kw, name] of aestheticKeywords) {
+      if (text.includes(kw)) {
+        aesthetic = name;
+        break;
+      }
+    }
+    if (!aesthetic) {
+      aesthetic = "Contemporary High Fashion";
+    }
+  }
+
+  // 3. Detect Silhouette
+  let silhouette = "Custom Tailored Fit";
+  const silhouetteKeywords = [
+    ["oversized", "Oversized Architectural Cut"],
+    ["fluted", "Sculptural Fluted Column"],
+    ["asymmetric", "Asymmetrical Draped Line"],
+    ["asymmetrical", "Asymmetrical Silhouette"],
+    ["a-line", "Classic A-Line Silhouette"],
+    ["mermaid", "Fitted Mermaid Contour"],
+    ["peplum", "Structured Peplum Hourglass"],
+    ["pleated", "Plissé Micro-Pleated Flow"],
+    ["plisse", "Accordion Plissé Column"],
+    ["corset", "Cinched Corsetry Structure"],
+    ["draped", "Fluid Draped Silhouette"],
+    ["tailored", "Structured Sharp Tailoring"],
+    ["fitted", "Slim-Fit Contoured Cut"],
+    ["baggy", "Relaxed Streetwear Silhouette"],
+    ["cropped", "High-Cropped Architectural"],
+    ["maxi", "Full-Length Flowing Maxi"],
+    ["mini", "Tailored Mini Length"],
+    ["tiered", "Tiered Layered Volume"]
+  ];
+  for (const [kw, name] of silhouetteKeywords) {
+    if (text.includes(kw)) {
+      silhouette = name;
+      break;
+    }
+  }
+
+  // 4. Detect Fabric
+  let fabric = fashionContext.fabric || "";
+  if (!fabric) {
+    const fabricKeywords = [
+      ["velvet", "Silk-Cotton Velvet"],
+      ["silk", "Pure Mulberry Silk"],
+      ["satin", "Heavy Silk Satin"],
+      ["chiffon", "Sheer Silk Chiffon"],
+      ["leather", "Supple Napa Leather"],
+      ["wool", "Fine Melton Wool & Cashmere"],
+      ["cashmere", "100% Mongolian Cashmere"],
+      ["denim", "Premium Japanese Denim"],
+      ["linen", "Breathable Organic Linen"],
+      ["lace", "Intricate Chantilly Lace"],
+      ["organza", "Structured Silk Organza"],
+      ["tweed", "Heritage Bouclé Tweed"],
+      ["metallic", "Liquid Metallic Membrane"],
+      ["nylon", "Technical Bonded Nylon"],
+      ["cotton", "Fine Combed Cotton"],
+      ["crepe", "Italian Silk Crepe"]
+    ];
+    for (const [kw, name] of fabricKeywords) {
+      if (text.includes(kw)) {
+        fabric = name;
+        break;
+      }
+    }
+    if (!fabric) {
+      fabric = "Custom Textile Composition";
+    }
+  }
+
+  // 5. Detect Colors & Build Palette
+  const colorMap = [
+    { kw: "maroon", name: "Royal Maroon", hex: "#5a1322" },
+    { kw: "crimson", name: "Wine Crimson", hex: "#7a1a2f" },
+    { kw: "red", name: "Scarlet Red", hex: "#c41e3a" },
+    { kw: "burgundy", name: "Deep Burgundy", hex: "#4a1224" },
+    { kw: "rose", name: "Dusty Rose", hex: "#b94361" },
+    { kw: "pink", name: "Soft Blush", hex: "#e899aa" },
+    { kw: "green", name: "Forest Green", hex: "#1f5636" },
+    { kw: "emerald", name: "Deep Emerald", hex: "#0f432a" },
+    { kw: "sage", name: "Muted Sage", hex: "#8a9a86" },
+    { kw: "blue", name: "Royal Azure", hex: "#1b3f7a" },
+    { kw: "navy", name: "Midnight Navy", hex: "#0b1b36" },
+    { kw: "cobalt", name: "Vibrant Cobalt", hex: "#0047ab" },
+    { kw: "cyan", name: "Electric Cyan", hex: "#00bfff" },
+    { kw: "yellow", name: "Sunshine Ochre", hex: "#e5a93c" },
+    { kw: "gold", name: "Antique Gold", hex: "#d4af37" },
+    { kw: "golden", name: "Zardozi Gold", hex: "#dfb14b" },
+    { kw: "orange", name: "Sunset Tangerine", hex: "#e0632b" },
+    { kw: "purple", name: "Imperial Violet", hex: "#4b1e5a" },
+    { kw: "lavender", name: "Soft Lavender", hex: "#b5a3d4" },
+    { kw: "black", name: "Pitch Noir", hex: "#0e0f14" },
+    { kw: "white", name: "Pristine Chalk", hex: "#fcfbfa" },
+    { kw: "ivory", name: "Pure Ivory", hex: "#f7f3ed" },
+    { kw: "cream", name: "Warm Cream", hex: "#eee8df" },
+    { kw: "beige", name: "Oatmeal Beige", hex: "#d8cfc4" },
+    { kw: "camel", name: "Rich Camel", hex: "#9a6b42" },
+    { kw: "brown", name: "Dark Espresso", hex: "#3e2723" },
+    { kw: "silver", name: "Liquid Silver", hex: "#b0b5be" },
+    { kw: "metallic", name: "Chrome Metallic", hex: "#9ea5b0" },
+    { kw: "neon", name: "Neon Cyber Glow", hex: "#39ff14" }
+  ];
+
+  let detectedPalette = [];
+  for (const c of colorMap) {
+    if (text.includes(c.kw)) {
+      detectedPalette.push({ name: c.name, hex: c.hex });
+    }
+  }
+
+  // If user provided colors in context
+  if (fashionContext.colors?.length) {
+    for (const userColor of fashionContext.colors) {
+      const matched = colorMap.find((c) => userColor.toLowerCase().includes(c.kw));
+      if (matched && !detectedPalette.some((p) => p.hex === matched.hex)) {
+        detectedPalette.push({ name: matched.name, hex: matched.hex });
+      }
+    }
+  }
+
+  if (detectedPalette.length === 0) {
+    detectedPalette = [
+      { name: "Editorial Ivory", hex: "#f7f3ed" },
+      { name: "Deep Charcoal", hex: "#222326" },
+      { name: "Subtle Warm Gray", hex: "#8c8e96" }
+    ];
+  }
+
+  return {
+    garment,
+    aesthetic,
+    silhouette,
+    fabric,
+    colors: detectedPalette.map((p) => p.name).join(", "),
+    palette: detectedPalette,
+    designNotes: `Generative fashion attire synthesized specifically from creative direction: "${promptText}". Custom ${silhouette.toLowerCase()} tailored with ${fabric.toLowerCase()} in a ${aesthetic.toLowerCase()} aesthetic.`
+  };
 }
 
+/**
+ * On-the-fly AI image generation specifically designed for the user's prompt
+ */
+async function generateImageFromPrompt(promptText, fashionContext = {}) {
+  const parts = [
+    "high-fashion full-length photography of a fashion model wearing",
+    promptText.trim(),
+  ];
+
+  if (fashionContext.garment) parts.push(`garment: ${fashionContext.garment}`);
+  if (fashionContext.aesthetic) parts.push(`aesthetic: ${fashionContext.aesthetic}`);
+  if (fashionContext.fabric) parts.push(`fabric: ${fashionContext.fabric}`);
+  if (fashionContext.colors?.length) parts.push(`colors: ${fashionContext.colors.join(", ")}`);
+
+  parts.push("haute couture fashion editorial, professional runway lighting, clean minimalist studio backdrop, 8k resolution, photorealistic fabric texture, Vogue standard, sharp focus");
+
+  const fullPrompt = parts.join(", ");
+  const seed = Math.floor(Math.random() * 900000) + 100000;
+  const targetUrls = [
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=768&height=1024&nologo=true&seed=${seed}&model=turbo`,
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=768&height=1024&nologo=true&seed=${seed}`,
+  ];
+
+  for (const targetUrl of targetUrls) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 24000);
+
+    try {
+      const response = await fetch(targetUrl, {
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      if (buffer.length < 1000) {
+        continue;
+      }
+
+      // Save to disk so it persists and is served statically
+      const fileName = `generated-${Date.now()}-${seed}.jpg`;
+      const uploadsDir = path.resolve(__dirname, "../../../uploads/studio");
+      const publicFashionDir = path.resolve(__dirname, "../../../../frontend/public/fashion");
+
+      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+      if (!fs.existsSync(publicFashionDir)) fs.mkdirSync(publicFashionDir, { recursive: true });
+
+      fs.writeFileSync(path.join(uploadsDir, fileName), buffer);
+      fs.writeFileSync(path.join(publicFashionDir, fileName), buffer);
+
+      const base64Data = buffer.toString("base64");
+
+      return {
+        success: true,
+        base64Data,
+        imageUrl: `/uploads/studio/${fileName}`,
+        fileName,
+      };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.warn("Attempt failed for", targetUrl.substring(0, 50), err.message);
+    }
+  }
+
+  return { success: false, error: "All AI image generation endpoints were unreachable." };
+}
+
+/**
+ * Generate Studio Design based strictly on the user's creative prompt
+ */
 export const generateStudio = async (payload, user = null) => {
+  const promptText = payload.prompt || "Fashion design concept";
+  const context = payload.fashion_context || {};
   let result = null;
 
-  // 1. Try Python ML service if running
+  // 1. First, attempt to invoke Python ML microservice on 8003 if available
   try {
     const response = await axios.post(
       `${STUDIO_ML_URL}/generate`,
       payload,
       {
-        timeout: 4000,
+        timeout: 10000,
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
 
-    if (response.data && response.data.status === "success") {
+    if (response.data && response.data.status === "success" && response.data.image_data) {
       result = response.data;
     }
-  } catch (error) {
-    // Expected when ML service port 8003 is offline; synthesize via embedded intelligence
+  } catch (mlErr) {
+    // ML microservice not reachable or timed out, proceed directly to integrated AI generator
   }
 
-  // 2. Fallback / Embedded Fashion Intelligence Synthesizer
-  if (!result || result.status !== "success" || !result.image_data) {
-    const promptText = payload.prompt || "Fashion design concept";
-    const context = payload.fashion_context || {};
-    const matchedConcept = matchFashionConcept(promptText, context);
+  // 2. If Python ML service didn't return an image, generate directly on-the-fly from the user's prompt
+  if (!result || !result.image_data) {
+    console.log(`[FASHNOVA Studio] Generating custom attire on-the-fly for prompt: "${promptText}"`);
+    const aiGeneration = await generateImageFromPrompt(promptText, context);
 
-    const base64Data = loadImageAsBase64(matchedConcept.imageFile);
+    if (aiGeneration.success) {
+      const intel = extractFashionMetadataFromPrompt(promptText, context);
 
-    const resolvedGarment = context.garment || context.category || matchedConcept.garment;
-    const resolvedAesthetic = context.aesthetic || matchedConcept.aesthetic;
-    const resolvedColors = context.colors?.length ? context.colors.join(", ") : matchedConcept.colorNames;
+      result = {
+        status: "success",
+        generation_type: payload.generation_type || "design",
+        prompt: promptText,
+        model: "FASHNOVA-GenAI-Flux-v2.5",
+        image_data: aiGeneration.base64Data,
+        image_url: aiGeneration.imageUrl,
+        metadata: {
+          garment: intel.garment,
+          aesthetic: intel.aesthetic,
+          silhouette: intel.silhouette,
+          fabric: intel.fabric,
+          pattern: context.pattern || "Bespoke Design Pattern",
+          colors: intel.colors,
+          palette: intel.palette,
+          design_notes: intel.designNotes,
+          provider: "fashnova-generative-flux",
+        },
+        message: `Successfully synthesized custom fashion attire for "${intel.garment}" based on your exact creative direction.`,
+      };
+    }
+  }
+
+  // 3. Fallback: If external generation timed out or network was completely offline, provide offline concept
+  if (!result || !result.image_data) {
+    console.warn("[FASHNOVA Studio] External generator unavailable, using offline fallback concept");
+    const intel = extractFashionMetadataFromPrompt(promptText, context);
+    const fallbackImage = "/fashion/runway-couture.jpg";
 
     result = {
       status: "success",
       generation_type: payload.generation_type || "design",
       prompt: promptText,
-      model: "FASHNOVA-Studio-v2.0-Intelligence",
-      image_data: base64Data,
-      image_url: matchedConcept.imageUrl,
+      model: "FASHNOVA-Studio-Offline",
+      image_data: null,
+      image_url: fallbackImage,
       metadata: {
-        garment: resolvedGarment,
-        aesthetic: resolvedAesthetic,
-        silhouette: matchedConcept.silhouette,
-        fabric: context.fabric || matchedConcept.fabric,
-        pattern: context.pattern || matchedConcept.pattern,
-        colors: resolvedColors,
-        palette: matchedConcept.palette,
-        design_notes: matchedConcept.designNotes,
-        provider: "fashnova-fashion-generator",
+        garment: intel.garment,
+        aesthetic: intel.aesthetic,
+        silhouette: intel.silhouette,
+        fabric: intel.fabric,
+        colors: intel.colors,
+        palette: intel.palette,
+        design_notes: intel.designNotes,
+        provider: "fashnova-offline",
       },
-      message: `Generated haute couture concept for ${resolvedGarment} in ${resolvedAesthetic} aesthetic with ${resolvedColors} palette.`,
+      message: `Generated design specification for ${intel.garment}.`,
     };
   }
 
-  // 3. Persist generation record in PostgreSQL via Prisma
+  // 4. Persist generation record in PostgreSQL via Prisma
   if (result && result.status === "success") {
     try {
       await prisma.studioGeneration.create({
@@ -346,7 +375,7 @@ export const generateStudio = async (payload, user = null) => {
           outputType: "FASHION_CONCEPT",
           prompt: payload.prompt || "",
           modelName: result.model || "fashnova-studio",
-          modelVersion: "2.0.0",
+          modelVersion: "2.5.0",
           parameters: payload.fashion_context || {},
           trendContext: payload.trend_context || {},
           outputs: result.image_url
@@ -364,7 +393,7 @@ export const generateStudio = async (payload, user = null) => {
         },
       });
     } catch (dbError) {
-      console.warn("Studio generation DB persist skipped:", dbError.message);
+      // Database logging is non-blocking
     }
   }
 

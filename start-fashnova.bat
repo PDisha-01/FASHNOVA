@@ -24,7 +24,7 @@ start "FASHNOVA Backend" cmd /k "cd backend && npm run dev"
 echo [4/4] Starting FASHNOVA Web App on port 5173...
 start "FASHNOVA Frontend" cmd /k "cd frontend && npm run dev"
 
-timeout /t 3 >nul
+ping 127.0.0.1 -n 4 >nul
 start http://localhost:5173
 
 echo ==============================================================
