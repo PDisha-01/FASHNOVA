@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./StyleEngine.css";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/useAuth";
 import { getStyleRecommendations } from "../services/api";
 
@@ -180,27 +181,7 @@ function StyleEngine() {
           NAVIGATION
       ============================================================ */}
 
-      <nav className="style-engine-navbar">
-        <Link to="/" className="style-engine-brand">
-          FASHNOVA
-        </Link>
-
-        <div className="style-engine-nav-links">
-          <Link to="/">HOME</Link>
-          <Link to="/vision">VISION</Link>
-          <Link to="/trends">TRENDS</Link>
-          <Link to="/studio">STUDIO</Link>
-          <Link
-            to="/style-engine"
-            style={{ color: "#3b1027", fontWeight: 700 }}
-          >
-            STYLE ENGINE
-          </Link>
-          <Link to="/profile">
-            {isAuthenticated ? userGreeting : "SIGN IN"}
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ============================================================
           HERO
@@ -439,7 +420,7 @@ function StyleEngine() {
                     ? recommendation.imageUrl
                     : recommendation.imageUrl.startsWith("/")
                       ? recommendation.imageUrl
-                      : `http://localhost:5000${recommendation.imageUrl}`)
+                      : `${import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, "") || "http://localhost:5000"}${recommendation.imageUrl}`)
                 : "/fashion/runway-couture.jpg";
 
               const breakdown =
