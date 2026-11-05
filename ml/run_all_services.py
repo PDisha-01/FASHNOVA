@@ -12,10 +12,11 @@ import multiprocessing
 import uvicorn
 from pathlib import Path
 
-# Add project root to sys.path
+# Add project root and ml packages to sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "ml"))
+sys.path.insert(0, str(PROJECT_ROOT / "ml" / "vision"))
 
 
 def run_vision():

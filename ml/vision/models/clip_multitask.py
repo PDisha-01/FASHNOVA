@@ -43,9 +43,15 @@ class CLIPMultiTaskClassifierV2(nn.Module):
     ):
         super().__init__()
 
-        self.clip = CLIPModel.from_pretrained(
-            "openai/clip-vit-base-patch32"
-        )
+        try:
+            self.clip = CLIPModel.from_pretrained(
+                "openai/clip-vit-base-patch32",
+                local_files_only=True,
+            )
+        except Exception:
+            self.clip = CLIPModel.from_pretrained(
+                "openai/clip-vit-base-patch32"
+            )
 
         # Every task, including baseColour, has its own attribute head.
         self.heads = nn.ModuleDict({

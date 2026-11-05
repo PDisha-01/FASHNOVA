@@ -4,4 +4,5 @@ export const visionAnalyzeSchema = z.object({
   fashionImageId: z
     .string()
     .uuid("fashionImageId must be a valid UUID."),
+  targetGender: z.string().optional(),
 });

@@ -1,4 +1,17 @@
-from fastapi import FastAPI, File, HTTPException, UploadFile
+import sys
+from pathlib import Path
+from typing import Optional
+
+# Ensure vision and ml packages are in sys.path
+CURRENT_FILE = Path(__file__).resolve()
+ML_ROOT = CURRENT_FILE.parents[2]
+VISION_ROOT = CURRENT_FILE.parents[1]
+
+for path_entry in [str(ML_ROOT), str(VISION_ROOT)]:
+    if path_entry not in sys.path:
+        sys.path.insert(0, path_entry)
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 
@@ -7,7 +20,7 @@ from vision.inference.predictor import create_predictor
 
 app = FastAPI(
     title="FASHNOVA Vision ML Service",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 
@@ -20,11 +33,16 @@ def health():
         "success": True,
         "service": "FASHNOVA Vision ML",
         "status": "healthy",
+        "model": predictor.model_name,
     }
 
 
 @app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
+async def analyze(
+    file: UploadFile = File(...),
+    original_name: Optional[str] = Form(None),
+    target_gender: Optional[str] = Form(None),
+):
     allowed_types = {
         "image/jpeg",
         "image/png",
@@ -49,11 +67,15 @@ async def analyze(file: UploadFile = File(...)):
         ) from error
 
     try:
-        result = predictor.predict(image)
+        result = predictor.predict(
+            image,
+            original_name=original_name or file.filename,
+            target_gender=target_gender,
+        )
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail="Vision inference failed.",
+            detail=f"Vision inference failed: {error}",
         ) from error
 
     return {

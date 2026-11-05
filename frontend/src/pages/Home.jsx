@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/useAuth";
 
 const RUNWAY_COLLECTIONS = [
@@ -101,27 +102,7 @@ function Home() {
       {/* =========================
           NAVBAR
       ========================= */}
-      <header className="fashion-navbar">
-        <Link to="/" className="fashion-brand">
-          <img src="/logo.png" alt="FASHNOVA" />
-
-          <div>
-            <strong>FASHNOVA</strong>
-            <span>FASHION / INTELLIGENCE</span>
-          </div>
-        </Link>
-
-        <nav className="fashion-nav-links">
-  <Link to="/vision">VISION</Link>
-  <Link to="/trends">TRENDS</Link>
-  <Link to="/studio">STUDIO</Link>
-  <Link to="/style-engine">STYLE ENGINE</Link>
-</nav>
-
-        <Link to="/profile" className="fashion-profile">
-          {isAuthenticated ? userGreeting : "SIGN IN"} <span>↗</span>
-        </Link>
-      </header>
+      <Navbar />
 
       <main>
         {/* =========================
@@ -249,23 +230,23 @@ function Home() {
         <section className="runway-intelligence-section">
           <div className="runway-header">
             <div>
-              <span className="section-index">003 / EDITORIAL COLLECTIONS</span>
-              <h2>RUNWAY INTELLIGENCE.</h2>
+              <span className="section-index">003 · EDITORIAL RUNWAY</span>
+              <h2>Runway Intelligence</h2>
             </div>
             <p>
-              Runway and haute couture silhouettes deconstructed through computer vision,
-              real-time trend momentum, and generative intelligence.
+              Curated haute couture and runway silhouettes analyzed through AI vision,
+              fabric geometry, and trend momentum.
             </p>
           </div>
 
           {/* Category Filter Pills */}
           <div className="runway-filters">
             {[
-              ["ALL", "ALL EDITORIALS"],
-              ["HAUTE COUTURE", "HAUTE COUTURE"],
-              ["ARCHITECTURAL TAILORING", "ARCHITECTURAL TAILORING"],
-              ["AVANT-GARDE", "AVANT-GARDE"],
-              ["CONTEMPORARY RESORT", "CONTEMPORARY RESORT"],
+              ["ALL", "All Collections"],
+              ["HAUTE COUTURE", "Haute Couture"],
+              ["ARCHITECTURAL TAILORING", "Tailoring"],
+              ["AVANT-GARDE", "Avant-Garde"],
+              ["CONTEMPORARY RESORT", "Resort"],
             ].map(([catKey, catLabel]) => (
               <button
                 key={catKey}
@@ -284,9 +265,9 @@ function Home() {
               <article key={look.id} className="runway-card">
                 <div className="runway-img-wrapper" onClick={() => setSelectedLook(look)}>
                   <img src={look.image} alt={look.title} loading="lazy" />
-                  <span className="runway-tag">{look.tag}</span>
+                  <span className="runway-tag">{look.tag.split("·")[0].trim()}</span>
                   <div className="runway-hover-overlay">
-                    <span>INSPECT INTELLIGENCE ↗</span>
+                    <span>Explore Look ↗</span>
                   </div>
                 </div>
 
@@ -300,37 +281,39 @@ function Home() {
                     {look.title}
                   </strong>
 
-                  <div className="runway-specs-summary">
-                    <span>{look.silhouette}</span> · <small>{look.fabric.split("&")[0]}</small>
-                  </div>
+                  <p className="runway-brief">
+                    {look.description.split(",")[0]}.
+                  </p>
 
-                  <div className="runway-palette-bar">
-                    {look.colors.map((c, i) => (
-                      <span
-                        key={i}
-                        className="runway-swatch-dot"
-                        style={{ backgroundColor: c.hex }}
-                        title={`${c.name} (${c.hex})`}
-                      ></span>
-                    ))}
-                    <span className="runway-confidence-score">Vision {look.confidence}</span>
-                  </div>
+                  <div className="runway-bottom-row">
+                    <div className="runway-palette-bar">
+                      {look.colors.map((c, i) => (
+                        <span
+                          key={i}
+                          className="runway-swatch-dot"
+                          style={{ backgroundColor: c.hex }}
+                          title={`${c.name} (${c.hex})`}
+                        />
+                      ))}
+                    </div>
 
-                  <div className="runway-card-actions">
-                    <button
-                      type="button"
-                      className="runway-inspect-btn"
-                      onClick={() => setSelectedLook(look)}
-                    >
-                      Inspect Intelligence ↗
-                    </button>
-                    <Link
-                      to="/studio"
-                      className="runway-recreate-btn"
-                      title="Recreate in Studio"
-                    >
-                      Studio ✦
-                    </Link>
+                    <div className="runway-card-actions">
+                      <button
+                        type="button"
+                        className="runway-inspect-btn"
+                        onClick={() => setSelectedLook(look)}
+                      >
+                        Inspect ↗
+                      </button>
+                      <Link
+                        to="/studio"
+                        state={{ presetPrompt: look.studioPrompt }}
+                        className="runway-recreate-btn"
+                        title="Recreate in Studio"
+                      >
+                        Studio ✦
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </article>

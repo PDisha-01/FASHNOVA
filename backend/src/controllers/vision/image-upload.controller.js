@@ -12,13 +12,14 @@ export const uploadVisionImage = async (req, res, next) => {
       });
     }
 
-    const { category } = req.body;
+    const { category, targetGender } = req.body;
+    const originalName = req.file.originalname || "fashion-image.jpg";
 
     const fashionItem = await prisma.fashionItem.create({
       data: {
         ownerId: req.user?.id ?? null,
         category,
-        source: "vision-upload",
+        source: `vision-upload|${originalName}|${targetGender || "Auto"}`,
       },
     });
 
@@ -26,7 +27,7 @@ export const uploadVisionImage = async (req, res, next) => {
       data: {
         fashionItemId: fashionItem.id,
         storageKey: req.file.filename,
-        imageUrl: `/uploads/vision/${req.file.filename}`,
+        imageUrl: `/uploads/vision/${req.file.filename}?name=${encodeURIComponent(originalName)}&gender=${encodeURIComponent(targetGender || "Auto")}`,
         mimeType: req.file.mimetype,
         fileSize: req.file.size,
       },
@@ -45,6 +46,8 @@ export const uploadVisionImage = async (req, res, next) => {
           imageUrl: fashionImage.imageUrl,
           mimeType: fashionImage.mimeType,
           fileSize: fashionImage.fileSize,
+          originalName,
+          targetGender: targetGender || "Auto",
         },
       },
     });

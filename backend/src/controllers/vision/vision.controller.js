@@ -4,6 +4,7 @@ export const analyzeVision = async (req, res, next) => {
   try {
     const analysis = await createVisionAnalysis({
       fashionImageId: req.body.fashionImageId,
+      targetGender: req.body.targetGender,
     });
 
     return res.status(201).json({

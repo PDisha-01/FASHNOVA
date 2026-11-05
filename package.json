@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node runner.js",
     "start": "node runner.js",
+    "build": "npm --prefix frontend run build",
     "backend": "cd backend && npm run dev",
     "frontend": "cd frontend && npm run dev",
     "ml": "python ml/run_all_services.py"

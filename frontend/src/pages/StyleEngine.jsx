@@ -1,17 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./StyleEngine.css";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/useAuth";
 import { getStyleRecommendations } from "../services/api";
 
-const OUTFIT_FILTER_PILLS = [
-  { key: "ALL", label: "ALL OUTFIT STYLES" },
-  { key: "EVERYDAY", label: "☕ EVERYDAY & CASUAL" },
-  { key: "FESTIVE", label: "🪔 FESTIVE & TRADITIONAL" },
-  { key: "FUNCTION", label: "🍸 FUNCTION & PARTY" },
-  { key: "WORK", label: "💼 SMART WORK & COLLEGE" },
-  { key: "BRUNCH", label: "🌿 WEEKEND BRUNCH & RESORT" },
+const OCCASION_TABS = [
+  { key: "ALL", label: "All Outfits", icon: "✨" },
+  { key: "EVERYDAY", label: "Everyday & Casual", icon: "☕" },
+  { key: "FESTIVE", label: "Festive & Weddings", icon: "🪔" },
+  { key: "FUNCTION", label: "Function & Party", icon: "🍸" },
+  { key: "WORK", label: "Smart Work & Campus", icon: "💼" },
+  { key: "BRUNCH", label: "Weekend Brunch", icon: "🌿" },
 ];
 
 function StyleEngine() {
@@ -21,17 +21,14 @@ function StyleEngine() {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userContextApplied, setUserContextApplied] = useState(false);
-
-  // Recommendation context filters
-  const [occasion, setOccasion] = useState("everyday");
-  const [season, setSeason] = useState(null);
-  const [aesthetic, setAesthetic] = useState(null);
-  const [topK, setTopK] = useState(12);
-  const [activeCategoryPill, setActiveCategoryPill] = useState("ALL");
+  const [activeTab, setActiveTab] = useState("ALL");
   const [selectedEnsemble, setSelectedEnsemble] = useState(null);
 
-  const fetchRecommendations = async (customOccasion, customSeason, customAesthetic, customTopK) => {
+  // Quick filters
+  const [seasonFilter, setSeasonFilter] = useState("ALL");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const fetchRecommendations = async (occasionKey = "everyday") => {
     setLoading(true);
     setError("");
 
@@ -49,16 +46,13 @@ function StyleEngine() {
         visionContext: { enabled: false },
         trendContext: { enabled: true },
         requestContext: {
-          occasion: customOccasion ?? occasion,
-          season: customSeason ?? season,
-          aesthetic: customAesthetic ?? aesthetic,
+          occasion: occasionKey === "ALL" ? "everyday" : occasionKey.toLowerCase(),
         },
         candidates: [],
-        top_k: customTopK ?? topK,
+        top_k: 12,
       });
 
       setRecommendations(data.recommendations || []);
-      setUserContextApplied(Boolean(data.userContextApplied));
     } catch (err) {
       setError(
         err.message || "Something went wrong while generating recommendations."
@@ -68,13 +62,12 @@ function StyleEngine() {
     }
   };
 
-  // Load recommendations automatically on mount
   useEffect(() => {
-    fetchRecommendations("everyday", null, null, 12);
+    fetchRecommendations("everyday");
   }, [user]);
 
-  const handleGetRecommendations = () => {
-    fetchRecommendations(occasion, season, aesthetic, topK);
+  const handleTabChange = (key) => {
+    setActiveTab(key);
   };
 
   const handleRecreateInStudio = (look) => {
@@ -88,693 +81,463 @@ function StyleEngine() {
     });
   };
 
-  const userGreeting = user?.profile?.firstName?.toUpperCase() || "PROFILE";
+  // Filter recommendations based on active occasion tab & season
+  const filteredRecommendations = recommendations.filter((r) => {
+    // 1. Season filter
+    if (seasonFilter !== "ALL") {
+      const candSeasons = (r.seasons || [r.season || ""]).map((s) => s.toUpperCase());
+      if (!candSeasons.some((s) => s.includes(seasonFilter) || s.includes("ALL-SEASON"))) {
+        return false;
+      }
+    }
 
-  const filteredRecommendations =
-    activeCategoryPill === "ALL"
-      ? recommendations
-      : recommendations.filter((r) => {
-          const pill = activeCategoryPill.toUpperCase();
-          const category = (r.category || "").toUpperCase();
-          const occasion = (r.occasion || "").toUpperCase();
-          const occasions = (r.occasions || []).map((o) => o.toUpperCase());
-          const subCategory = (r.subCategory || "").toUpperCase();
-          const aesthetic = (r.aesthetic || "").toUpperCase();
+    // 2. Occasion Tab filter
+    if (activeTab === "ALL") return true;
 
-          if (pill === "EVERYDAY") {
-            return (
-              category.includes("EVERYDAY") ||
-              category.includes("CASUAL") ||
-              occasion.includes("EVERYDAY") ||
-              occasions.some(
-                (o) =>
-                  o.includes("EVERYDAY") ||
-                  o.includes("CASUAL") ||
-                  o.includes("COLLEGE")
-              ) ||
-              subCategory.includes("COLLEGE") ||
-              subCategory.includes("COFFEE") ||
-              subCategory.includes("STREET")
-            );
-          }
-          if (pill === "FESTIVE") {
-            return (
-              category.includes("FESTIVE") ||
-              category.includes("TRADITIONAL") ||
-              occasion.includes("FESTIVE") ||
-              occasions.some(
-                (o) =>
-                  o.includes("FESTIVE") ||
-                  o.includes("TRADITIONAL") ||
-                  o.includes("WEDDING")
-              ) ||
-              subCategory.includes("DIWALI") ||
-              subCategory.includes("EID") ||
-              subCategory.includes("HALDI") ||
-              subCategory.includes("SANGEET") ||
-              aesthetic.includes("TRADITIONAL")
-            );
-          }
-          if (pill === "FUNCTION") {
-            return (
-              category.includes("FUNCTION") ||
-              category.includes("PARTY") ||
-              occasion.includes("FUNCTION") ||
-              occasion.includes("PARTY") ||
-              occasions.some(
-                (o) =>
-                  o.includes("FUNCTION") ||
-                  o.includes("PARTY") ||
-                  o.includes("FORMAL") ||
-                  o.includes("COCKTAIL")
-              ) ||
-              subCategory.includes("COCKTAIL") ||
-              subCategory.includes("RECEPTION") ||
-              subCategory.includes("BLACK TIE") ||
-              subCategory.includes("GALA")
-            );
-          }
-          if (pill === "WORK") {
-            return (
-              category.includes("WORK") ||
-              occasion.includes("WORK") ||
-              occasions.some((o) => o.includes("WORK") || o.includes("COLLEGE")) ||
-              subCategory.includes("OFFICE") ||
-              subCategory.includes("EXECUTIVE") ||
-              subCategory.includes("CAMPUS")
-            );
-          }
-          if (pill === "BRUNCH") {
-            return (
-              category.includes("BRUNCH") ||
-              category.includes("RESORT") ||
-              subCategory.includes("BRUNCH") ||
-              subCategory.includes("VACATION")
-            );
-          }
-          return category.includes(pill) || aesthetic.includes(pill);
-        });
+    const category = (r.category || "").toUpperCase();
+    const occasion = (r.occasion || "").toUpperCase();
+    const occasions = (r.occasions || []).map((o) => o.toUpperCase());
+    const subCategory = (r.subCategory || "").toUpperCase();
+
+    if (activeTab === "EVERYDAY") {
+      return (
+        category.includes("EVERYDAY") ||
+        category.includes("CASUAL") ||
+        occasion.includes("EVERYDAY") ||
+        occasions.some((o) => o.includes("EVERYDAY") || o.includes("CASUAL") || o.includes("COLLEGE")) ||
+        subCategory.includes("COLLEGE") ||
+        subCategory.includes("COFFEE") ||
+        subCategory.includes("STREET")
+      );
+    }
+
+    if (activeTab === "FESTIVE") {
+      return (
+        category.includes("FESTIVE") ||
+        category.includes("TRADITIONAL") ||
+        occasion.includes("FESTIVE") ||
+        occasions.some((o) => o.includes("FESTIVE") || o.includes("TRADITIONAL") || o.includes("WEDDING")) ||
+        subCategory.includes("DIWALI") ||
+        subCategory.includes("EID") ||
+        subCategory.includes("HALDI") ||
+        subCategory.includes("SANGEET")
+      );
+    }
+
+    if (activeTab === "FUNCTION") {
+      return (
+        category.includes("FUNCTION") ||
+        category.includes("PARTY") ||
+        occasion.includes("FUNCTION") ||
+        occasion.includes("PARTY") ||
+        occasions.some((o) => o.includes("FUNCTION") || o.includes("PARTY") || o.includes("FORMAL") || o.includes("COCKTAIL")) ||
+        subCategory.includes("COCKTAIL") ||
+        subCategory.includes("RECEPTION") ||
+        subCategory.includes("BLACK TIE") ||
+        subCategory.includes("GALA")
+      );
+    }
+
+    if (activeTab === "WORK") {
+      return (
+        category.includes("WORK") ||
+        occasion.includes("WORK") ||
+        occasions.some((o) => o.includes("WORK") || o.includes("COLLEGE")) ||
+        subCategory.includes("OFFICE") ||
+        subCategory.includes("EXECUTIVE") ||
+        subCategory.includes("CAMPUS")
+      );
+    }
+
+    if (activeTab === "BRUNCH") {
+      return (
+        category.includes("BRUNCH") ||
+        category.includes("RESORT") ||
+        subCategory.includes("BRUNCH") ||
+        subCategory.includes("VACATION")
+      );
+    }
+
+    return true;
+  });
+
+  // Helper to extract a short, clean formula (e.g. "Baby Tee + Camel Blazer + Wide-Leg Denim + Sneakers")
+  const getOutfitFormula = (pieces) => {
+    if (!pieces) return null;
+    const parts = [];
+    if (pieces.dress) {
+      parts.push(pieces.dress.split(" with ")[0]);
+    } else if (pieces.top) {
+      parts.push(pieces.top.split(" with ")[0]);
+    }
+    if (pieces.outerwear) {
+      parts.push(pieces.outerwear.split(" with ")[0]);
+    }
+    if (pieces.bottom) {
+      parts.push(pieces.bottom.split(" with ")[0]);
+    }
+    if (pieces.footwear) {
+      parts.push(pieces.footwear.split(" with ")[0]);
+    }
+    return parts.slice(0, 4).join("  ·  ");
+  };
 
   return (
     <main className="style-engine-page">
-      {/* ============================================================
-          NAVIGATION
-      ============================================================ */}
-
       <Navbar />
 
       {/* ============================================================
-          HERO
+          CLEAN, COMPACT HERO & OCCASION TABS
       ============================================================ */}
-
-      <section className="style-engine-hero">
-        <div className="style-engine-hero-content">
-          <span className="style-engine-eyebrow">
-            FRESH OUTFIT INSPIRATION & STYLING
-          </span>
-
-          <h1>
-            Practical outfit ideas,
-            <br />
-            for every day & celebration.
-          </h1>
-
+      <section className="se-header">
+        <div className="se-header-content">
+          <span className="se-eyebrow">✦ OUTFIT INTELLIGENCE</span>
+          <h1>Curated Outfits, Made Simple.</h1>
           <p>
-            Get curated head-to-toe outfits tailored for everyday college &amp;
-            street chic, grand festive occasions, and evening party functions—complete
-            with coordinated footwear, accessories, and stylist advice.
-          </p>
-
-          <button
-            className="style-engine-primary-button"
-            onClick={handleGetRecommendations}
-            disabled={loading}
-          >
-            {loading ? "Synthesizing Outfits..." : "Generate Outfit Recommendations ↗"}
-          </button>
-        </div>
-
-        <div className="style-engine-intelligence-card">
-          <span>OUTFIT INTELLIGENCE PIPELINE</span>
-
-          <div className="style-engine-flow">
-            <div className="style-engine-flow-item">
-              <strong>EVERYDAY CASUAL</strong>
-              <small>College, coffee &amp; street chic</small>
-            </div>
-
-            <div className="style-engine-flow-line" />
-
-            <div className="style-engine-flow-item">
-              <strong>FESTIVE TRADITIONAL</strong>
-              <small>Diwali, Eid, Haldi &amp; weddings</small>
-            </div>
-
-            <div className="style-engine-flow-line" />
-
-            <div className="style-engine-flow-item">
-              <strong>FUNCTION &amp; PARTY</strong>
-              <small>Cocktails, receptions &amp; galas</small>
-            </div>
-          </div>
-
-          <div className="style-engine-flow-result">
-            <span>COMPLETE HEAD-TO-TOE COORDINATES</span>
-            <strong>Top, bottom, shoes &amp; styling tips</strong>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          CONTEXT
-      ============================================================ */}
-
-      <section className="style-engine-context-section">
-        <div className="style-engine-section-heading">
-          <span>01 — OCCASION &amp; STYLE CALIBRATION</span>
-
-          <h2>Select your occasion to get instant outfit ideas.</h2>
-
-          <p>
-            Filter by everyday casual, festive celebrations, and evening functions to discover
-            ready-to-wear coordinated outfits.
+            Complete head-to-toe coordinated looks designed for your everyday routines,
+            festive celebrations, and evening functions.
           </p>
 
           {isAuthenticated && user?.preferences && (
-            <div className="style-engine-auth-badge">
-              <span className="auth-badge-dot"></span>
-              Personalized with your saved preferences
+            <div className="se-profile-pill">
+              <span className="se-pill-dot" />
+              Tuned to your preferences
               {user.preferences.preferredStyles?.length
-                ? ` (${user.preferences.preferredStyles.join(", ")})`
+                ? ` (${user.preferences.preferredStyles.slice(0, 2).join(", ")})`
                 : ""}
             </div>
           )}
         </div>
 
-        <div className="style-engine-context-grid">
-          {/* OCCASION */}
-          <div className="style-engine-context-card">
-            <span>OCCASION</span>
-
-            <select
-              value={occasion}
-              onChange={(event) => {
-                const val = event.target.value;
-                setOccasion(val);
-                fetchRecommendations(val, season, aesthetic, topK);
-              }}
-            >
-              <option value="everyday">☕ Everyday &amp; College Casual</option>
-              <option value="festive">🪔 Festive &amp; Traditional (Diwali, Eid, Weddings)</option>
-              <option value="function">🍸 Function / Cocktail / Evening Party</option>
-              <option value="work">💼 Smart Work &amp; Campus Presentations</option>
-              <option value="brunch">🌿 Weekend Brunch &amp; Resort</option>
-            </select>
+        {/* Occasion Tabs Bar */}
+        <div className="se-tabs-bar">
+          <div className="se-tabs-scroll">
+            {OCCASION_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                className={`se-tab ${activeTab === tab.key ? "active" : ""}`}
+                onClick={() => handleTabChange(tab.key)}
+              >
+                <span className="se-tab-icon">{tab.icon}</span>
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
 
-          {/* SEASON */}
-          <div className="style-engine-context-card">
-            <span>SEASON</span>
-
-            <select
-              value={season ?? ""}
-              onChange={(event) => {
-                const val = event.target.value || null;
-                setSeason(val);
-                fetchRecommendations(occasion, val, aesthetic, topK);
-              }}
+          <div className="se-filter-actions">
+            <button
+              type="button"
+              className={`se-filter-toggle ${showAdvanced ? "active" : ""}`}
+              onClick={() => setShowAdvanced(!showAdvanced)}
             >
-              <option value="">All Seasons</option>
-              <option value="Spring">Spring / Forward</option>
-              <option value="Summer">Summer / High Sun</option>
-              <option value="Autumn">Autumn / Tailoring</option>
-              <option value="Winter">Winter / Layering</option>
-            </select>
-          </div>
-
-          {/* STYLE */}
-          <div className="style-engine-context-card">
-            <span>AESTHETIC</span>
-
-            <select
-              value={aesthetic ?? ""}
-              onChange={(event) => {
-                const val = event.target.value || null;
-                setAesthetic(val);
-                fetchRecommendations(occasion, season, val, topK);
-              }}
-            >
-              <option value="">All Aesthetics</option>
-              <option value="Effortless Chic">Effortless Chic / Street Style</option>
-              <option value="Traditional">Festive &amp; Traditional Craft</option>
-              <option value="Party Glamour">Party Glamour &amp; Cocktail</option>
-              <option value="Quiet Luxury">Quiet Luxury &amp; Tailoring</option>
-              <option value="Streetwear">Urban &amp; K-Streetwear</option>
-              <option value="Resort">Resort &amp; Brunch</option>
-            </select>
-          </div>
-
-          {/* LIMIT */}
-          <div className="style-engine-context-card">
-            <span>OUTFIT COUNT</span>
-
-            <select
-              value={topK}
-              onChange={(event) => {
-                const val = Number(event.target.value);
-                setTopK(val);
-                fetchRecommendations(occasion, season, aesthetic, val);
-              }}
-            >
-              <option value={6}>Top 6 Outfits</option>
-              <option value={10}>Top 10 Outfits</option>
-              <option value={12}>All 12 Outfits</option>
-            </select>
+              <span>Filters</span>
+              <small>{showAdvanced ? "▲" : "▼"}</small>
+            </button>
           </div>
         </div>
+
+        {/* Optional Collapsible Filter Bar */}
+        {showAdvanced && (
+          <div className="se-advanced-bar">
+            <div className="se-adv-group">
+              <label>Season</label>
+              <select
+                value={seasonFilter}
+                onChange={(e) => setSeasonFilter(e.target.value)}
+              >
+                <option value="ALL">All Seasons</option>
+                <option value="SPRING">Spring</option>
+                <option value="SUMMER">Summer</option>
+                <option value="AUTUMN">Autumn</option>
+                <option value="WINTER">Winter</option>
+              </select>
+            </div>
+
+            <div className="se-adv-meta">
+              <span>Showing {filteredRecommendations.length} curated ensembles</span>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ============================================================
-          RECOMMENDATIONS
+          CURATED OUTFITS GRID (COMPACT, EDITORIAL, VISUAL-FORWARD)
       ============================================================ */}
-
-      <section className="style-engine-recommendation-section">
-        <div className="style-engine-section-heading">
-          <span>02 — CURATED OUTFIT RECOMMENDATIONS</span>
-
-          <h2>Coordinated outfits for functions, festivals &amp; everyday life.</h2>
-
-          <p>
-            Explore head-to-toe outfit ideas complete with top, bottom, layer, footwear, accessories, and stylist tips.
-          </p>
-
-          {userContextApplied && (
-            <div className="style-engine-auth-badge">
-              ✓ Tuned using your color harmony and silhouette preferences
-            </div>
-          )}
-        </div>
-
-        {/* Global Category Filter Pills */}
-        <div className="style-engine-filter-pills">
-          {OUTFIT_FILTER_PILLS.map((pill) => (
-            <button
-              key={pill.key}
-              type="button"
-              className={`style-engine-filter-pill ${
-                activeCategoryPill === pill.key ? "active" : ""
-              }`}
-              onClick={() => setActiveCategoryPill(pill.key)}
-            >
-              {pill.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ERROR */}
-        {error && (
-          <div className="style-engine-empty-state">
-            <span>STYLE ENGINE</span>
-            <h3>Unable to generate recommendations.</h3>
-            <p>{error}</p>
-          </div>
-        )}
-
-        {/* LOADING */}
+      <section className="se-grid-section">
         {loading && (
-          <div className="style-engine-empty-state">
-            <span className="auth-badge-dot"></span>
-            <h3>Synthesizing Global Ensembles...</h3>
-            <p>
-              Evaluating silhouette geometry, textile compatibility, and global runway momentum.
-            </p>
+          <div className="se-loading-state">
+            <div className="se-spinner" />
+            <p>Curating your personalized outfit ensembles...</p>
           </div>
         )}
 
-        {/* RESULTS GRID */}
-        {!loading && filteredRecommendations.length > 0 && (
-          <div className="style-engine-results">
-            {filteredRecommendations.map((recommendation, index) => {
-              const imageUrl = recommendation.imageUrl
-                ? (recommendation.imageUrl.startsWith("http")
-                    ? recommendation.imageUrl
-                    : recommendation.imageUrl.startsWith("/")
-                      ? recommendation.imageUrl
-                      : `${import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, "") || "http://localhost:5000"}${recommendation.imageUrl}`)
-                : "/fashion/runway-couture.jpg";
+        {error && (
+          <div className="se-empty-card">
+            <h3>Unable to load recommendations</h3>
+            <p>{error}</p>
+            <button
+              type="button"
+              className="se-primary-btn"
+              onClick={() => fetchRecommendations(activeTab)}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
 
-              const breakdown =
-                recommendation.score_breakdown ||
-                recommendation.scoreBreakdown ||
-                {};
-              const pieces = recommendation.outfitPieces || {};
+        {!loading && !error && filteredRecommendations.length === 0 && (
+          <div className="se-empty-card">
+            <h3>No outfits found</h3>
+            <p>Try switching to "All Outfits" or reset the season filter.</p>
+            <button
+              type="button"
+              className="se-primary-btn"
+              onClick={() => {
+                setActiveTab("ALL");
+                setSeasonFilter("ALL");
+              }}
+            >
+              View All Outfits
+            </button>
+          </div>
+        )}
+
+        {!loading && filteredRecommendations.length > 0 && (
+          <div className="se-cards-grid">
+            {filteredRecommendations.map((look, index) => {
+              const imageUrl = look.imageUrl
+                ? (look.imageUrl.startsWith("http")
+                    ? look.imageUrl
+                    : look.imageUrl.startsWith("/")
+                      ? look.imageUrl
+                      : `${import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, "") || "http://localhost:5000"}${look.imageUrl}`)
+                : "/fashion/outfit-everyday-denim.jpg";
+
+              const formula = getOutfitFormula(look.outfitPieces);
 
               return (
-                <article
-                  key={recommendation.candidateId ?? index}
-                  className="style-engine-result-card"
-                >
-                  {/* Top Bar with Rank, Confidence, and Origin */}
-                  <div className="style-engine-card-topbar">
-                    <div className="style-engine-rank-group">
-                      <span className="style-engine-rank-badge">
-                        #{recommendation.rank ?? index + 1}
-                      </span>
-                      {recommendation.origin && (
-                        <span className="style-engine-origin-badge">
-                          📍 {recommendation.origin}
+                <article key={look.candidateId ?? index} className="se-card">
+                  {/* Photo Frame */}
+                  <div
+                    className="se-card-media"
+                    onClick={() => setSelectedEnsemble(look)}
+                    title="Click to inspect complete outfit"
+                  >
+                    <img src={imageUrl} alt={look.name} loading="lazy" />
+
+                    {/* Floating Badges */}
+                    <div className="se-media-badges">
+                      {look.origin && (
+                        <span className="se-origin-badge">
+                          {look.origin.split("·")[0].trim()}
                         </span>
                       )}
-                    </div>
-
-                    <span className="style-engine-confidence-pill">
-                      {recommendation.confidence || "HIGH"} CONFIDENCE
-                    </span>
-                  </div>
-
-                  {/* High-Res Media Frame */}
-                  <div
-                    className="style-engine-candidate-media"
-                    onClick={() => setSelectedEnsemble(recommendation)}
-                    title="Click to inspect full look"
-                  >
-                    <img
-                      src={imageUrl}
-                      alt={recommendation.name}
-                      className="style-engine-candidate-img"
-                      loading="lazy"
-                    />
-                    <div className="style-engine-media-overlay">
-                      <span>INSPECT COMPLETE LOOK ↗</span>
-                    </div>
-                  </div>
-
-                  {/* Header & Match Score */}
-                  <div className="style-engine-card-header">
-                    <div className="style-engine-category-row">
-                      <span className="style-engine-category-tag">
-                        {recommendation.category || "OUTFIT ENSEMBLE"}
+                      <span className="se-score-badge">
+                        {Math.round(look.score ?? 95)}% Match
                       </span>
-                      <strong className="style-engine-score-tag">
-                        {Number(recommendation.score ?? 95).toFixed(1)}% MATCH
-                      </strong>
+                    </div>
+
+                    <div className="se-media-hover">
+                      <span>Quick View ↗</span>
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="se-card-body">
+                    <div className="se-card-meta">
+                      <span className="se-category-tag">{look.category}</span>
+                      <span className="se-occasion-tag">{look.occasion || "Everyday"}</span>
                     </div>
 
                     <h3
-                      className="style-engine-outfit-title"
-                      onClick={() => setSelectedEnsemble(recommendation)}
+                      className="se-card-title"
+                      onClick={() => setSelectedEnsemble(look)}
                     >
-                      {recommendation.name}
+                      {look.name}
                     </h3>
-                  </div>
 
-                  {/* Silhouette and Fabric Specs */}
-                  <div className="style-engine-specs-row">
-                    {recommendation.silhouette && (
-                      <span className="style-engine-spec-pill">
-                        <strong>Cut:</strong> {recommendation.silhouette}
-                      </span>
+                    {/* Compact Outfit Formula */}
+                    {formula && (
+                      <p className="se-card-formula" title={formula}>
+                        {formula}
+                      </p>
                     )}
-                    {recommendation.fabric && (
-                      <span className="style-engine-spec-pill">
-                        <strong>Textile:</strong> {recommendation.fabric.split("&")[0]}
-                      </span>
+
+                    {/* Palette Dots */}
+                    {look.palette && look.palette.length > 0 && (
+                      <div className="se-palette-row">
+                        <div className="se-dots">
+                          {look.palette.map((p, i) => (
+                            <span
+                              key={i}
+                              className="se-dot"
+                              style={{ backgroundColor: p.hex }}
+                              title={`${p.name} (${p.hex})`}
+                            />
+                          ))}
+                        </div>
+                        <span className="se-color-name">
+                          {look.colors?.[0] || ""}
+                        </span>
+                      </div>
                     )}
-                  </div>
 
-                  {/* Coordinated Outfit Pieces Breakdown */}
-                  {pieces && Object.keys(pieces).length > 0 && (
-                    <div className="style-engine-pieces-box">
-                      <div className="style-engine-pieces-title">
-                        <span>HEAD-TO-TOE COORDINATES</span>
-                      </div>
-                      <ul className="style-engine-pieces-list">
-                        {(pieces.top || pieces.dress) && (
-                          <li>
-                            <strong>Top / Dress:</strong> {pieces.dress || pieces.top}
-                          </li>
-                        )}
-                        {pieces.outerwear && (
-                          <li>
-                            <strong>Layer:</strong> {pieces.outerwear}
-                          </li>
-                        )}
-                        {pieces.bottom && (
-                          <li>
-                            <strong>Bottom:</strong> {pieces.bottom}
-                          </li>
-                        )}
-                        {pieces.footwear && (
-                          <li>
-                            <strong>Footwear:</strong> {pieces.footwear}
-                          </li>
-                        )}
-                        {pieces.accessories && (
-                          <li>
-                            <strong>Accessories:</strong> {pieces.accessories}
-                          </li>
-                        )}
-                      </ul>
+                    {/* Card Actions */}
+                    <div className="se-card-actions">
+                      <button
+                        type="button"
+                        className="se-inspect-btn"
+                        onClick={() => setSelectedEnsemble(look)}
+                      >
+                        Explore Look ↗
+                      </button>
+
+                      <button
+                        type="button"
+                        className="se-studio-btn"
+                        onClick={() => handleRecreateInStudio(look)}
+                        title="Recreate this design in Studio"
+                      >
+                        Studio ✦
+                      </button>
                     </div>
-                  )}
-
-                  {/* Color Harmony Swatches */}
-                  {recommendation.palette && recommendation.palette.length > 0 && (
-                    <div className="style-engine-palette-row">
-                      <span className="palette-label">Palette:</span>
-                      <div className="palette-dots">
-                        {recommendation.palette.map((swatch, i) => (
-                          <span
-                            key={i}
-                            className="palette-swatch-dot"
-                            style={{ backgroundColor: swatch.hex }}
-                            title={`${swatch.name} (${swatch.hex})`}
-                          />
-                        ))}
-                      </div>
-                      <span className="palette-color-names">
-                        {recommendation.colors?.[0] || ""}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Stylist Rationale */}
-                  {recommendation.reasons?.length > 0 && (
-                    <div className="style-engine-rationale-box">
-                      <p>{recommendation.reasons[0]}</p>
-                    </div>
-                  )}
-
-                  {/* Score Breakdown Bars */}
-                  {breakdown && (
-                    <div className="style-engine-breakdown">
-                      {breakdown.color_compatibility != null && (
-                        <div className="breakdown-bar-item">
-                          <span>Color Harmony</span>
-                          <div className="breakdown-bar">
-                            <div
-                              className="breakdown-bar-fill"
-                              style={{
-                                width: `${Math.round(
-                                  (breakdown.color_compatibility || 0.9) * 100
-                                )}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {breakdown.season_compatibility != null && (
-                        <div className="breakdown-bar-item">
-                          <span>Seasonal Fit</span>
-                          <div className="breakdown-bar">
-                            <div
-                              className="breakdown-bar-fill"
-                              style={{
-                                width: `${Math.round(
-                                  (breakdown.season_compatibility || 0.9) * 100
-                                )}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {breakdown.trend_relevance != null && (
-                        <div className="breakdown-bar-item">
-                          <span>Trend Momentum</span>
-                          <div className="breakdown-bar">
-                            <div
-                              className="breakdown-bar-fill"
-                              style={{
-                                width: `${Math.round(
-                                  (breakdown.trend_relevance || 0.95) * 100
-                                )}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Card Action Buttons */}
-                  <div className="style-engine-card-actions">
-                    <button
-                      type="button"
-                      className="style-engine-recreate-btn"
-                      onClick={() => handleRecreateInStudio(recommendation)}
-                      title="Recreate this outfit in Studio"
-                    >
-                      Recreate in Studio ✦
-                    </button>
-
-                    <button
-                      type="button"
-                      className="style-engine-inspect-btn"
-                      onClick={() => setSelectedEnsemble(recommendation)}
-                    >
-                      Inspect Look ↗
-                    </button>
                   </div>
                 </article>
               );
             })}
           </div>
         )}
+      </section>
 
-        {/* Empty state when no filtered items */}
-        {!loading && !error && filteredRecommendations.length === 0 && (
-          <div className="style-engine-empty-state">
-            <span>FASHNOVA STYLE ENGINE</span>
-            <h3>No outfits found in this category.</h3>
-            <p>
-              Switch back to "ALL OUTFIT STYLES" to view complete outfits across Everyday, Festive, and Function occasions.
-            </p>
-          </div>
-        )}
-
-        {/* Full Ensemble Inspection Modal */}
-        {selectedEnsemble && (
+      {/* ============================================================
+          IN-DEPTH OUTFIT INSPECTION MODAL ("Explore Look")
+      ============================================================ */}
+      {selectedEnsemble && (
+        <div
+          className="se-modal-backdrop"
+          onClick={() => setSelectedEnsemble(null)}
+        >
           <div
-            className="style-engine-modal-backdrop"
-            onClick={() => setSelectedEnsemble(null)}
+            className="se-modal-dialog"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="style-engine-modal-content"
-              onClick={(e) => e.stopPropagation()}
+            <button
+              type="button"
+              className="se-modal-close"
+              onClick={() => setSelectedEnsemble(null)}
+              aria-label="Close"
             >
-              <button
-                type="button"
-                className="style-engine-modal-close"
-                onClick={() => setSelectedEnsemble(null)}
-              >
-                ✕
-              </button>
+              ✕
+            </button>
 
-              <div className="style-engine-modal-grid">
-                {/* Left Photo */}
-                <div className="style-engine-modal-image-col">
-                  <img
-                    src={selectedEnsemble.imageUrl || "/fashion/runway-couture.jpg"}
-                    alt={selectedEnsemble.name}
-                  />
-                  {selectedEnsemble.origin && (
-                    <span className="style-engine-modal-origin">
-                      📍 {selectedEnsemble.origin}
+            <div className="se-modal-grid">
+              {/* Left Photo */}
+              <div className="se-modal-image-col">
+                <img
+                  src={selectedEnsemble.imageUrl || "/fashion/outfit-everyday-denim.jpg"}
+                  alt={selectedEnsemble.name}
+                />
+                <span className="se-modal-tag">
+                  {selectedEnsemble.origin || "Global Style Collection"}
+                </span>
+              </div>
+
+              {/* Right Content */}
+              <div className="se-modal-content-col">
+                <div className="se-modal-eyebrow">
+                  <span>{selectedEnsemble.category}</span>
+                  <strong className="se-modal-match">
+                    {Math.round(selectedEnsemble.score ?? 96)}% Style Match
+                  </strong>
+                </div>
+
+                <h2>{selectedEnsemble.name}</h2>
+
+                {/* Specs Pills */}
+                <div className="se-modal-specs">
+                  {selectedEnsemble.silhouette && (
+                    <span className="se-spec-pill">
+                      <strong>Silhouette:</strong> {selectedEnsemble.silhouette}
+                    </span>
+                  )}
+                  {selectedEnsemble.fabric && (
+                    <span className="se-spec-pill">
+                      <strong>Fabric:</strong> {selectedEnsemble.fabric}
+                    </span>
+                  )}
+                  {selectedEnsemble.season && (
+                    <span className="se-spec-pill">
+                      <strong>Season:</strong> {selectedEnsemble.season}
                     </span>
                   )}
                 </div>
 
-                {/* Right Details */}
-                <div className="style-engine-modal-info-col">
-                  <div className="modal-category-row">
-                    <span>{selectedEnsemble.category}</span>
-                    <strong>{Number(selectedEnsemble.score ?? 96).toFixed(1)}% MATCH</strong>
+                {/* Complete Head-to-Toe Breakdown */}
+                {selectedEnsemble.outfitPieces && (
+                  <div className="se-modal-pieces">
+                    <span className="se-modal-section-title">
+                      HEAD-TO-TOE COORDINATES
+                    </span>
+                    <ul className="se-pieces-list">
+                      {Object.entries(selectedEnsemble.outfitPieces).map(([key, val]) => (
+                        <li key={key}>
+                          <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong>
+                          <span>{val}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                )}
 
-                  <h3>{selectedEnsemble.name}</h3>
-
-                  <div className="modal-specs-grid">
-                    <div>
-                      <span>SILHOUETTE</span>
-                      <strong>{selectedEnsemble.silhouette || "Sculptural"}</strong>
-                    </div>
-                    <div>
-                      <span>TEXTILE</span>
-                      <strong>{selectedEnsemble.fabric || "Pure Silk & Wool"}</strong>
-                    </div>
-                    <div>
-                      <span>OCCASION</span>
-                      <strong>{selectedEnsemble.occasion || "Formal"}</strong>
-                    </div>
-                    <div>
-                      <span>SEASON</span>
-                      <strong>{selectedEnsemble.season || "All-Season"}</strong>
+                {/* Palette */}
+                {selectedEnsemble.palette && selectedEnsemble.palette.length > 0 && (
+                  <div className="se-modal-palette">
+                    <span className="se-modal-section-title">COLOR HARMONY</span>
+                    <div className="se-palette-chips">
+                      {selectedEnsemble.palette.map((p, idx) => (
+                        <div key={idx} className="se-palette-chip">
+                          <span
+                            className="se-chip-swatch"
+                            style={{ backgroundColor: p.hex }}
+                          />
+                          <small>{p.name}</small>
+                        </div>
+                      ))}
                     </div>
                   </div>
+                )}
 
-                  {/* Coordinated Outfit Items */}
-                  {selectedEnsemble.outfitPieces && (
-                    <div className="modal-pieces-box">
-                      <span>COMPLETE HEAD-TO-TOE OUTFIT SPECIFICATION</span>
-                      <ul>
-                        {Object.entries(selectedEnsemble.outfitPieces).map(([key, val]) => (
-                          <li key={key}>
-                            <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {val}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Color Harmony */}
-                  {selectedEnsemble.palette && (
-                    <div className="modal-palette-box">
-                      <span>COLOR HARMONY PALETTE</span>
-                      <div className="modal-palette-chips">
-                        {selectedEnsemble.palette.map((p, idx) => (
-                          <div key={idx} className="modal-palette-chip">
-                            <span
-                              className="modal-swatch-dot"
-                              style={{ backgroundColor: p.hex }}
-                            />
-                            <small>{p.name} ({p.hex})</small>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Stylist Advice */}
-                  {selectedEnsemble.stylingAdvice && (
-                    <div className="modal-advice-box">
-                      <span>EDITORIAL STYLING ADVICE</span>
-                      <p>{selectedEnsemble.stylingAdvice}</p>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="modal-action-row">
-                    <button
-                      type="button"
-                      className="modal-studio-btn"
-                      onClick={() => handleRecreateInStudio(selectedEnsemble)}
-                    >
-                      RECREATE OUTFIT IN STUDIO ↗
-                    </button>
-                    <button
-                      type="button"
-                      className="modal-close-btn"
-                      onClick={() => setSelectedEnsemble(null)}
-                    >
-                      CLOSE
-                    </button>
+                {/* Stylist Advice */}
+                {selectedEnsemble.stylingAdvice && (
+                  <div className="se-modal-advice">
+                    <span className="se-modal-section-title">STYLIST ADVICE</span>
+                    <p>{selectedEnsemble.stylingAdvice}</p>
                   </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="se-modal-actions">
+                  <button
+                    type="button"
+                    className="se-modal-primary-btn"
+                    onClick={() => handleRecreateInStudio(selectedEnsemble)}
+                  >
+                    Recreate in AI Studio ✦
+                  </button>
+                  <button
+                    type="button"
+                    className="se-modal-secondary-btn"
+                    onClick={() => setSelectedEnsemble(null)}
+                  >
+                    Done
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </section>
+        </div>
+      )}
     </main>
   );
 }

@@ -115,10 +115,10 @@ export async function uploadVisionImageFile(formData) {
   return response.data;
 }
 
-export async function analyzeVisionImage(fashionImageId) {
+export async function analyzeVisionImage(fashionImageId, targetGender) {
   const response = await apiRequest("/vision/analyze", {
     method: "POST",
-    body: { fashionImageId },
+    body: { fashionImageId, targetGender },
   });
 
   return response.data;

@@ -42,6 +42,8 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
@@ -49,6 +51,14 @@ body {
   background: var(--ivory);
   color: var(--text);
   font-family: var(--sans);
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
 }
 
 a {
@@ -651,27 +661,28 @@ select {
 
 .fashnova-home .runway-filter-btn {
   background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 9px 18px;
-  text-transform: uppercase;
+  border: 1px solid rgba(59, 16, 39, 0.16);
+  border-radius: 20px;
+  color: #5c4a50;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 8px 18px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fashnova-home .runway-filter-btn:hover:not(.active) {
-  background: var(--cream);
+  background: rgba(59, 16, 39, 0.04);
   color: var(--wine);
   border-color: var(--wine);
 }
 
 .fashnova-home .runway-filter-btn.active {
   background: var(--wine);
-  color: var(--ivory);
+  color: #fffdf9;
   border-color: var(--wine);
+  box-shadow: 0 4px 12px rgba(59, 16, 39, 0.16);
 }
 
 /* Runway Cards Grid */
@@ -698,13 +709,14 @@ select {
   flex-direction: column;
   background: var(--paper);
   border: 1px solid var(--border);
+  border-radius: 6px;
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
 .fashnova-home .runway-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(59, 16, 39, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(59, 16, 39, 0.08);
 }
 
 .fashnova-home .runway-img-wrapper {
@@ -725,28 +737,29 @@ select {
 }
 
 .fashnova-home .runway-card:hover .runway-img-wrapper img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 .fashnova-home .runway-tag {
   position: absolute;
   top: 12px;
   left: 12px;
-  padding: 4px 8px;
-  background: rgba(247, 243, 237, 0.94);
-  border: 1px solid var(--border);
+  padding: 4px 10px;
+  background: rgba(247, 243, 237, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(59, 16, 39, 0.12);
+  border-radius: 12px;
   color: var(--wine);
-  font-size: 0.52rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   z-index: 2;
 }
 
 .fashnova-home .runway-hover-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(59, 16, 39, 0.85) 0%, rgba(59, 16, 39, 0.2) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(59, 16, 39, 0.75) 0%, rgba(59, 16, 39, 0.15) 60%, transparent 100%);
   opacity: 0;
   transition: opacity 0.25s ease;
   display: flex;
@@ -761,9 +774,9 @@ select {
 
 .fashnova-home .runway-hover-overlay span {
   color: #fff;
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
 }
 
 .fashnova-home .runway-card-info {
@@ -782,7 +795,7 @@ select {
 
 .fashnova-home .runway-category {
   color: var(--rose);
-  font-size: 0.54rem;
+  font-size: 0.56rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -790,19 +803,19 @@ select {
 
 .fashnova-home .runway-momentum {
   color: #107545;
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   font-weight: 700;
   background: rgba(16, 117, 69, 0.08);
-  padding: 2px 6px;
-  border-radius: 2px;
+  padding: 2px 7px;
+  border-radius: 10px;
 }
 
 .fashnova-home .runway-title {
   color: var(--wine);
   font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.3;
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -811,69 +824,73 @@ select {
   color: var(--rose);
 }
 
-.fashnova-home .runway-specs-summary {
-  color: var(--muted);
-  font-size: 0.72rem;
-  white-space: nowrap;
+.fashnova-home .runway-brief {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #6b5c5e;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.fashnova-home .runway-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(59, 16, 39, 0.08);
 }
 
 .fashnova-home .runway-palette-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 0;
+  gap: 5px;
 }
 
 .fashnova-home .runway-swatch-dot {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
   display: inline-block;
 }
 
-.fashnova-home .runway-confidence-score {
-  margin-left: auto;
-  font-size: 0.65rem;
-  color: var(--muted);
-  font-weight: 600;
-}
-
 .fashnova-home .runway-card-actions {
   display: flex;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 6px;
+  align-items: center;
+  gap: 6px;
 }
 
 .fashnova-home .runway-inspect-btn {
-  flex: 1;
-  background: var(--cream);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1px solid rgba(59, 16, 39, 0.2);
+  border-radius: 3px;
   color: var(--wine);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 8px 10px;
+  padding: 6px 10px;
   cursor: pointer;
-  text-transform: uppercase;
   transition: all 0.2s ease;
 }
 
 .fashnova-home .runway-inspect-btn:hover {
   background: var(--wine);
-  color: var(--ivory);
+  color: #fffdf9;
   border-color: var(--wine);
 }
 
 .fashnova-home .runway-recreate-btn {
   background: var(--wine);
-  color: var(--ivory);
-  font-size: 0.64rem;
+  border: 1px solid var(--wine);
+  border-radius: 3px;
+  color: #fffdf9;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: 8px 12px;
+  padding: 6px 11px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -882,6 +899,7 @@ select {
 
 .fashnova-home .runway-recreate-btn:hover {
   background: var(--rose);
+  border-color: var(--rose);
 }
 
 /* =========================================================
@@ -1150,6 +1168,46 @@ select {
   background: var(--wine);
   color: var(--ivory);
   border-color: var(--wine);
+}
+
+@media (max-width: 640px) {
+  .fashnova-home .runway-modal-content {
+    margin: 12px;
+    width: 100%;
+    max-height: 94vh;
+  }
+
+  .fashnova-home .runway-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fashnova-home .runway-modal-image-col img {
+    height: 280px;
+    object-fit: cover;
+  }
+
+  .fashnova-home .runway-modal-info-col {
+    padding: 0 16px 20px;
+  }
+
+  .fashnova-home .runway-modal-metrics {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .fashnova-home .runway-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .fashnova-home .runway-modal-studio-link,
+  .fashnova-home .runway-modal-vision-link {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 /* Feature In-line Fashion Visuals */
@@ -3454,15 +3512,105 @@ select {
 }
 
 .vision-page .vision-color-dot {
-  width: 13px;
-  height: 13px;
-
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-
   border-radius: 50%;
-  background: pink;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
 
-  border: 1px solid rgba(0, 0, 0, 0.2);
+.vision-page .vision-gender-label {
+  color: var(--wine);
+  font-weight: 600;
+}
+
+.vision-style-focus-selector {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vision-style-focus-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.vision-style-focus-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.vision-focus-pill {
+  padding: 0.48rem 1rem;
+  border: 1px solid rgba(59, 16, 39, 0.2);
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--wine);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.vision-focus-pill:hover {
+  border-color: var(--wine);
+  background: rgba(59, 16, 39, 0.06);
+}
+
+.vision-focus-pill.active {
+  background: var(--wine);
+  color: var(--ivory);
+  border-color: var(--wine);
+  box-shadow: 0 2px 6px rgba(59, 16, 39, 0.2);
+}
+
+.vision-sample-chips {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed rgba(59, 16, 39, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.vision-sample-chips-title {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.vision-sample-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.vision-chip-btn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(169, 84, 108, 0.35);
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--wine);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.vision-chip-btn:hover {
+  background: rgba(169, 84, 108, 0.12);
+  border-color: var(--rose);
+  transform: translateY(-1px);
 }
 
 .vision-page .vision-result-model {
@@ -7271,42 +7419,300 @@ select {
   color: #ffffff;
 }
 
-/* Responsive */
+/* =========================================================
+   NAVBAR — RESPONSIVE & MOBILE DRAWER
+   ========================================================= */
+
+.navbar-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid rgba(80, 35, 55, 0.18);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 100;
+  transition: all 0.25s ease;
+}
+
+.navbar-mobile-toggle .toggle-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #3b1027;
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.navbar-mobile-toggle.open {
+  background: rgba(80, 35, 55, 0.08);
+}
+
+.navbar-mobile-toggle.open .toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-mobile-toggle.open .toggle-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.navbar-mobile-toggle.open .toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile Drawer Overlay Backdrop */
+.navbar-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 10, 16, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-mobile-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mobile Drawer Panel */
+.navbar-mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(86vw, 380px);
+  background: #fbf8f4;
+  border-left: 1px solid rgba(80, 35, 55, 0.16);
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.navbar-mobile-drawer.open {
+  transform: translateX(0);
+}
+
+.mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-bottom: 1px solid rgba(80, 35, 55, 0.12);
+  background: #f7f3ed;
+}
+
+.mobile-drawer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #3b1027;
+}
+
+.mobile-drawer-brand img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.mobile-drawer-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer-brand-text strong {
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #3b1027;
+}
+
+.mobile-drawer-brand-text small {
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  color: #8b6f7b;
+  font-weight: 700;
+}
+
+.mobile-drawer-close {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(80, 35, 55, 0.2);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  color: #3b1027;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer-close:hover {
+  background: #3b1027;
+  color: #fffdf9;
+}
+
+.mobile-drawer-links {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0;
+  flex: 1;
+}
+
+.mobile-drawer-link {
+  display: flex;
+  align-items: center;
+  padding: 16px 26px;
+  color: #4b2638;
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(80, 35, 55, 0.06);
+  transition: all 0.2s ease;
+}
+
+.mobile-link-num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #a9546c;
+  letter-spacing: 0.15em;
+  width: 32px;
+}
+
+.mobile-link-text {
+  flex: 1;
+}
+
+.mobile-link-arrow {
+  color: #8b6f7b;
+  font-size: 1rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mobile-drawer-link:hover,
+.mobile-drawer-link.active {
+  background: rgba(80, 35, 55, 0.06);
+  color: #3b1027;
+  font-weight: 700;
+  padding-left: 32px;
+}
+
+.mobile-drawer-link.active .mobile-link-arrow {
+  color: #a9546c;
+  transform: translateX(4px);
+}
+
+.mobile-drawer-footer {
+  padding: 24px;
+  border-top: 1px solid rgba(80, 35, 55, 0.12);
+  background: #f7f3ed;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-drawer-profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  background: #3b1027;
+  color: #fffdf9;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.mobile-drawer-profile-btn:hover {
+  background: #a9546c;
+}
+
+.profile-btn-icon {
+  color: #d4af37;
+  font-size: 1.05rem;
+}
+
+.mobile-drawer-tagline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  color: #8b6f7b;
+}
+
+.mobile-drawer-tagline span {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.mobile-drawer-tagline small {
+  font-size: 0.65rem;
+  opacity: 0.8;
+}
+
+/* =========================================================
+   RESPONSIVE NAVBAR MEDIA QUERIES
+   ========================================================= */
 
 @media (max-width: 900px) {
   .navbar {
-    gap: 20px;
+    padding: 14px 5vw;
+    min-height: 72px;
   }
 
   .navbar .brand-logo {
-    width: 145px;
+    width: 140px;
   }
 
+  /* Hide desktop links and show mobile hamburger toggle */
   .navbar .nav-links {
-    gap: 18px;
-  }
-}
-
-@media (max-width: 700px) {
-  .navbar {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 18px 5%;
-  }
-
-  .navbar .brand {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .navbar .nav-links {
-    margin-left: 0;
-    gap: 16px;
-    flex-wrap: wrap;
+    display: none;
   }
 
   .navbar .profile-button {
     display: none;
+  }
+
+  .navbar-mobile-toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 4vw;
+    min-height: 64px;
+  }
+
+  .navbar .brand-logo {
+    width: 125px;
   }
 }
 /* =========================================================

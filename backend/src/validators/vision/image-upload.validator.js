@@ -10,4 +10,5 @@ export const visionImageUploadSchema = z.object({
     "ACCESSORY",
     "FULL_OUTFIT",
   ]),
+  targetGender: z.string().optional(),
 });
